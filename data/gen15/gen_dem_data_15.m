@@ -194,7 +194,7 @@ nPts = 100;
 Pow = nan(nPts,length(q_min));
 Feval = nan(nPts,length(q_min));
 for i = 1:length(z_inc)
-   [Pow(:,i),Feval(:,i)] = eval_pwl(q(i,:)',c(i,:)',q_min(i),q_max(i),nPts); 
+   [Pow(:,i),Feval(:,i)] = eval_pwl(q(i,1:numPts(i))',c(i,1:numPts(i))',q_min(i),q_max(i),nPts); 
    z_inc(i) = Pow(2,i) - Pow(1,i);
 end
 
