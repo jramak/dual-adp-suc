@@ -90,7 +90,7 @@ end % not completely the same as d but that's, we can check later
 p_s = p_cs(1,:);
 
 % generate demand 100 scenarios:
-scenarios = 100;
+scenarios = 500;
 D_idx_lb = gendist(p_s,T,scenarios);
 D_idx_ub = gendist(p_s,T,scenarios);
 D_s_lb = inf(size(D_idx_lb)); % demand scenarios for lower bound
