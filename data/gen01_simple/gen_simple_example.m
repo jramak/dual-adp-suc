@@ -1,7 +1,7 @@
-function gen_dem_data_15(maxDemand,percent_sig)
+function gen_simple_example(maxDemand,percent_sig)
 
 numOffers = 10;
-numGens = 15;
+numGens = 1;
 
 s1.name = 'GenOfferPrice';
 s1.form = 'full';
@@ -55,7 +55,7 @@ r_struct = rgdx('uc_all',s8);
 r_qmin = r_struct.val;
 qmin = r_qmin((numOffers+1):(numOffers+numGens));
 
-T = 168;
+T = 3;
 % d = 2000*ones(T,1);
 % maxDemand = 2000;
 % percent_sig = 0.15;
@@ -63,7 +63,8 @@ sigma = maxDemand*percent_sig;
 quadPts = 10;
 [x,c] = lgwt(quadPts,maxDemand-4*sigma,maxDemand+4*sigma);
 
-d = read_PJM_xls(maxDemand);
+% d = read_PJM_xls(maxDemand);
+d = [500;400;500];
 
 x_s = (d./maxDemand)*x';
 c_s = (d./maxDemand)*c';
@@ -139,11 +140,13 @@ end
 % spot market buying unit:
 % q(numGens+1,1) = 0; c(numGens+1,1) = 0; 
 % q(numGens+1,2) = 500; c(numGens+1,2) = 50000; % $100 slope per MW
-% q(numGens+1,3) = maxDemand; c(numGens+1,3) = 50000+(maxDemand-500)*200; % $200 slope per MW
+% q(numGens+1,3) = maxDemand; c(numGens+1,3) = 50000+(maxDemand-500)...
+%     *200; % $200 slope per MW
 % numPts(numGens+1) = 3;
 q(numGens+1,1) = 0; c(numGens+1,1) = 0; 
 q(numGens+1,2) = 100; c(numGens+1,2) = 20000; % $200 slope per MW
-q(numGens+1,3) = maxDemand+4*sigma; c(numGens+1,3) = 20000+(maxDemand+4*sigma-100)*850; % $850 slope per MW
+q(numGens+1,3) = maxDemand+4*sigma; c(numGens+1,3) = 20000+...
+    (maxDemand+4*sigma-100)*850; % $850 slope per MW
 numPts(numGens+1) = 3;
 % spot market selling unit
 % q(numGens+2,1) = -1000500; c(numGens+2,1) = -10001000; % $10 slope per MW
@@ -202,7 +205,7 @@ end
 % D_s_lb (ub) = 168 by 100 matrix for lower (upper) bound runs
 %             = each column represents one sample path
 
-iwgdx(['uc15_',num2str(maxDemand),'md_',num2str(percent_sig*100),...
+iwgdx(['uc1_',num2str(maxDemand),'md_',num2str(percent_sig*100),...
     'sig.gdx'],'q',q,'c',c,'numPts',numPts,'h_bar',h_bar,'c_bar',c_bar,...
     'Ld',Ld,'Lu',Lu,'d',d,'D_s_lb',D_s_lb,'D_s_idx_lb',D_idx_lb,...
     'D_s_ub',D_s_ub,'D_s_idx_ub',D_idx_ub,'x_s',x_s,'p_s',p_s,...
