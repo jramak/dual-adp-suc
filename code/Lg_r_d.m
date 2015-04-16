@@ -1,5 +1,6 @@
 function [cost,z_sol,z_sol_std,V1,uGen1,V2,uGen2] = Lg_r_d(q,c,qmin,...
-    qmax,c_bar,h_bar,Lu,Ld,ps,lambda,T,Rd_i,Ru_i,nPts,paths,P,F,numDemands)
+    qmax,c_bar,h_bar,Lu,Ld,ps,lambda,T,Rd_i,Ru_i,nPts,paths,P,F,...
+    numDemands,Pstep)
 % all inputs are in column form (if they are vectors)
 
 % number of states = Lu + Ld
@@ -19,7 +20,7 @@ idx_s = cell(Lu,1);
 P_mat_s = cell(Lu,1);
 F_mat_s = cell(Lu,1);
 for i = 1:(Lu-1)
-    tmp_idx = (qmin <= P) & (P <= min(qmax,qmin+i*Ru_i));
+    tmp_idx = (P <= min(qmax,qmin+i*Ru_i)+eps);
     idx_s{i} = find(tmp_idx);
 %     pow_s{i} = P(tmp_idx);
 %     p = pow_s{i};
@@ -27,7 +28,10 @@ for i = 1:(Lu-1)
     tmp_P_mat = repmat(P,1,length(p));
     tmp_F_mat = repmat(F,1,length(p));
     for j = 1:length(p)
-        tmp_idx2 = (max(qmin,p(j)-Rd_i) > P) | (P > min(qmax,p(j)+Ru_i));
+        % include one discretization point above p(j)+Ru
+        % and also one discretization point below p(j)-Rd
+        % this ensures algorithm outputs true lower bound
+        tmp_idx2 = ((p(j)-Rd_i-Pstep) > P) | (P > (p(j)+Ru_i+Pstep));
         tmp_P_mat(tmp_idx2,j) = inf; 
         tmp_F_mat(tmp_idx2,j) = inf; 
     end
@@ -42,7 +46,7 @@ p = P;
 tmp_P_mat = repmat(P,1,length(p));
 tmp_F_mat = repmat(F,1,length(p));
 for j = 1:length(p)
-    tmp_idx2 = (max(qmin,p(j)-Rd_i) > P) | (P > min(qmax,p(j)+Ru_i));
+    tmp_idx2 = ((p(j)-Rd_i-Pstep) > P) | (P > (p(j)+Ru_i+Pstep));
     tmp_P_mat(tmp_idx2,j) = inf; 
     tmp_F_mat(tmp_idx2,j) = inf; 
 end
@@ -53,7 +57,7 @@ F_mat_s{Lu} = tmp_F_mat;
 % contraint
 % tmp_idx = (qmin <= P) & (P <= min(qmax,qmin+Lu*Ru_i));
 % can_off_flag = (P(tmp_idx) <= qmin+Rd_i);
-can_off_flag = (P <= (qmin+Rd_i));
+can_off_flag = (P <= (qmin+Rd_i)+eps);
 
 % store value function and policy in two appropriate parts:
 % PART1

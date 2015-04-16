@@ -23,6 +23,8 @@ q_max = q_max;
 numGens = length(Lu) - 2; % number of generators not including buy/sell
 T = 168;
 quadPts = length(p_s); % number of quadrature points in distribution
+% power level step size for each generator
+Pstep = (Pow(2,1:numGens) - Pow(1,1:numGens))';
 
 % initialize lambda via heuristic approach
 slopes = inf(numGens+1,1);
@@ -120,7 +122,7 @@ for k = 1:maxIters
             uGen1{i},V2{i},uGen2{i}] = ...
             Lg_r_d(q(i,1:numPts(i))',c(i,1:numPts(i))',q_min(i),...
             q_max(i),c_bar(i),h_bar(i),Lu(i),Ld(i),p_s,lambda,T,Rd(i),...
-            Ru(i),nPts,paths,Pow(:,i),Feval(:,i),quadPts);
+            Ru(i),nPts,paths,Pow(:,i),Feval(:,i),quadPts,Pstep(i));
         time(i) = toc(tind);
 %         sumZ = sumZ + z_sol_avg(:,:,i); 
     end
@@ -178,10 +180,6 @@ for k = 1:maxIters
 %     lambda = lambda + rho0.*grad;
 end
 tot_time=toc(ttot);
-
-% power level step size for each generator
-% Pstep = (Pow(2,1:numGens) - Pow(1,1:numGens))';
-Pstep = (Pow(2,1:numGens) - Pow(1,1:numGens))';
 
 delete(poolobj);
 
