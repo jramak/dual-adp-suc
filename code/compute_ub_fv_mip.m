@@ -30,7 +30,8 @@ for i = 1:numGens
     V2{i} = tmpV2; 
 end
 
-myeps = 0.2;
+myeps = 0.01;
+myeps2 = 0.5;
 
 tic; 
 for k = 1:numSamples
@@ -88,7 +89,7 @@ for k = 1:numSamples
             filename,' --subprob=',num2str(numGens+2),' mip=cplex lo=3']);
         irgdx('ubout.gdx');
         
-        assert(abs(optca) <= myeps);
+        assert(abs(optca) <= myeps2);
         assert(abs(modelstatus - 1) <= myeps);
         
         % store results from optimization
