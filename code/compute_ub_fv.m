@@ -134,10 +134,10 @@ for k = 1:numSamples
         z_prev_idx(flag_rel) = round((z_prev(flag_rel) - ...
             q_min([flag_rel;false;false]))./Pstep(flag_rel) + 1);
         for i = flag_idx'
-            if (Pow(z_prev_idx(i),i) > z_hi(i) + myeps)
+            if (Pow(z_prev_idx(i),i) > z_hi(i))
                 z_prev_idx(i) = z_prev_idx(i) - 1;
                 assert(Pow(z_prev_idx(i),i) <= z_hi(i));
-            elseif (Pow(z_prev_idx(i),i) < z_lo(i) - myeps)
+            elseif (Pow(z_prev_idx(i),i) < z_lo(i))
                 z_prev_idx(i) = z_prev_idx(i) + 1;
                 assert(Pow(z_prev_idx(i),i) >= z_lo(i));
             end
