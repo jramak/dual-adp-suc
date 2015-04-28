@@ -45,7 +45,7 @@ for k = 1:numSamples
     for t = 1:T
         v_l = zeros(numGens,1);
         u_l = nan(numGens,1);
-        
+             
         % compute future value function for use in optimization  
         for i = 1:numGens
             if (states(i) < (Lu(i) - myeps))
@@ -65,8 +65,14 @@ for k = 1:numSamples
                 tmp = uGen1{i};
                 u_l(i) = tmp(states(i),z_prev_idx(i),t);
 
-                if (abs(u_l(i)) <= myeps)
-                    states(i) = states(i) + 1;
+                if (abs(u_l(i)) <= myeps) % if turned off
+                    % check to make sure generator can be turned off!
+                    % generator can be turned off only if below ramping
+                    if ((z_prev(i) - Rd(i) - q_min(i)) > 0)
+                        u_l(i) = 1; 
+                    else
+                        states(i) = states(i) + 1;
+                    end
                 else
                     assert(abs(u_l(i)-1) <= myeps);
                 end
