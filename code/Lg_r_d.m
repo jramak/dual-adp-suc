@@ -8,12 +8,6 @@ function [cost,z_sol,z_sol_std,V1,uGen1,V2,uGen2] = Lg_r_d(q,c,qmin,...
 % Lu+1 to Lu+Ld correspond to min-down time (gen being off)
 % T = 168; % time periods
 
-% discretize nPts for overall max and min power levels
-% qmin = q(1);
-% qmax = q(end);
-% [P,F] = eval_pwl(q,c,qmin,qmax,nPts);
-% numDemands = length(ps);
-
 % pre-compute matrices for DP runs
 % pow_s = cell(Lu,1); 
 idx_s = cell(Lu,1);
@@ -22,8 +16,6 @@ F_mat_s = cell(Lu,1);
 for i = 1:(Lu-1)
     tmp_idx = (P <= min(qmax,qmin+i*Ru_i)+eps);
     idx_s{i} = find(tmp_idx);
-%     pow_s{i} = P(tmp_idx);
-%     p = pow_s{i};
     p = P(tmp_idx);
     tmp_P_mat = repmat(P,1,length(p));
     tmp_F_mat = repmat(F,1,length(p));
@@ -40,8 +32,6 @@ for i = 1:(Lu-1)
 end
 % for case when state is Lu, any previous power level is possible
 idx_s{Lu} = (1:nPts)';
-%     pow_s{i} = P(tmp_idx);
-%     p = pow_s{i};
 p = P;
 tmp_P_mat = repmat(P,1,length(p));
 tmp_F_mat = repmat(F,1,length(p));
@@ -55,8 +45,6 @@ F_mat_s{Lu} = tmp_F_mat;
 
 % for case when generator can be turned off only if within ramp down
 % contraint
-% tmp_idx = (qmin <= P) & (P <= min(qmax,qmin+Lu*Ru_i));
-% can_off_flag = (P(tmp_idx) <= qmin+Rd_i);
 can_off_flag = (P <= (qmin+Rd_i)+eps);
 
 % store value function and policy in two appropriate parts:
@@ -85,10 +73,6 @@ tmp_F = F(tmp_idx_n);
 for t = T:-1:1  
     % PART1
     % for states l = 1, 2, ..., Lu, need previous power levels for state
-    
-%     if (t == 94)
-%         disp('for debugging purposes');
-%     end
 
     % for l = 1, 2, 3, ..., Lu-1, generator must stay on
     for i = 1:(Lu-1)
@@ -114,11 +98,7 @@ for t = T:-1:1
         zPow1(Lu,idx,t,j) = P(zIdx1(Lu,idx,t,j));
     end
     % turn off case
-%     try
     tmp_flag = (V2(1,t+1) < V1(Lu,idx,t)) & can_off_flag';
-%     catch
-%         disp('debugging: something is wrong');
-%     end
     uGen1(Lu,tmp_flag,t) = 0; % generator is turned off
     V1(Lu,tmp_flag,t) = V2(1,t+1);
     zPow1(Lu,tmp_flag,t,:) = 0; 
@@ -152,7 +132,6 @@ for t = T:-1:1
 end
 
 % move forward in time to generate solution for gradient computation
-% paths = 100;
 D_idx = gendist(ps',T,paths); % demand indices T x numsamplepaths
 cost = V2(Ld,1); % Lagrangian evaluation
 z_sol_mat = nan(length(ps),T,paths); % solution for every sample path
@@ -182,12 +161,6 @@ for k = 1:paths
             z_idx_prev = zIdx1(gen_state,z_idx_prev,t,D_idx(t,k));
             if z_sol_mat(D_idx(t,k),t,k) == 0
                 gen_state = gen_state + 1;
-%                 try
-%                 assert(isnan(z_idx_prev));
-%                 catch
-%                     k,t,z_idx_prev, z_sol_mat(:,t,k)
-%                     disp('something wrong')
-%                 end
             end
         elseif ((Lu < gen_state) && (gen_state < Lu+Ld))
             % generator must stay off
@@ -214,4 +187,3 @@ for k = 1:paths
 end
 z_sol = mean(z_sol_mat,3)';
 z_sol_std = std(z_sol_mat,0,3)';
-% disp('test');

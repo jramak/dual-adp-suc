@@ -48,25 +48,7 @@ for i = 1:T
 end
 
 lambda = lambda_init;
-% initialization for time-dependent lambda (not history dependent)
-% lambda = 20*ones(T,1);
-% lambda = lambda_init*p_s;
-
 nPts = 100; % number of function evaluation points for each generator
-
-%%%%%%%%%%%%%%%%%%%%%%%%% for testing purposes %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% generate pwl cost function for each generator
-% Plevel = nan(nPts,numGens);
-% Flevel = nan(nPts,numGens);
-% for i = 1:numGens
-%     [Plevel(:,i),Flevel(:,i)] = eval_pwl(q(i,1:numPts(i))',...
-%         c(i,1:numPts(i))',q_min(i),q_max(i),nPts);
-% end
-% % check that the pwl evaluations were generated correctly
-% assert(sum(sum(Plevel-Pow(:,1:numGens))) == 0);
-% assert(sum(sum(Flevel-Feval(:,1:numGens))) == 0);
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 paths = 1000; % number of sample paths for gradient evaluation
 z_sol_std = nan(T,length(p_s),numGens);
 z_sol_avg = nan(T,length(p_s),numGens+2);
@@ -112,8 +94,6 @@ time = nan(numGens+2,1);
 
 ttot = tic;
 for k = 1:maxIters
-%     sumZ = zeros(size(lambda));
-    
     % all generators excluding buy and sell
     parfor i = 1:numGens
 %     for i = 1:numGens
@@ -124,7 +104,6 @@ for k = 1:maxIters
             q_max(i),c_bar(i),h_bar(i),Lu(i),Ld(i),p_s,lambda,T,Rd(i),...
             Ru(i),nPts,paths,Pow(:,i),Feval(:,i),quadPts,Pstep(i));
         time(i) = toc(tind);
-%         sumZ = sumZ + z_sol_avg(:,:,i); 
     end
     tind = tic;
     % for buy generator
@@ -135,9 +114,6 @@ for k = 1:maxIters
         quadPts);
     time(numGens+1) = toc(tind);
 
-%     assert(all(all(V(1,1,:)==V(1,2,:))));
-    
-%     sumZ = sumZ + z_sol_avg(:,:,numGens+1);
     tind = tic; 
     % for sell generator
     [L_g_cost(numGens+2),z_sol_avg(:,:,numGens+2),V(2,:,:),uGen(2,:,:)]...
@@ -147,8 +123,6 @@ for k = 1:maxIters
         quadPts);
     z_sol_avg(:,:,numGens+2) = -1*z_sol_avg(:,:,numGens+2);
     time(numGens+2) = toc(tind); 
-    
-%     assert(all(all(V(2,1,:)==V(2,2,:))));
     
     opt_cost_vec(k) = sum(L_g_cost) + sum((lambda.*x_s)*p_s);
     
@@ -166,14 +140,10 @@ for k = 1:maxIters
         best_grad = grad;
     end
     
-%     sumZ = sumZ - z_sol_avg(:,:,numGens+2);
-    
-    %grad = x_s*p_s - sum(sumZ(:,1:(numGens+1)),2) + sumZ(:,numGens+2);
-%     grad = x_s*p_s - sumZ;
     grad = x_s - sum(z_sol_avg,3);
     lambda = lambda + stepVec(k).*rho0.*grad;
     
-    % some possible choices for subgradient step
+%     % some other possible choices for subgradient step
 %     lambda = lambda + alpha^k.*rho0.*grad;
 %     lambda = lambda + (1/k).*rho0.*grad;
 %     lambda = lambda + (1/sqrt(k)).*rho0.*grad;

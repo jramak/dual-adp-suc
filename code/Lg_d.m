@@ -21,19 +21,6 @@ LP_cost_vec = inf(numDemands,1);
 
 for t = T:-1:1
     for j = 1:numDemands
-%         if (sellOn) % for sell spot market generator
-%             f = [lambda(t,j);1;zeros(length(q),1)];
-% %            f = [lambda(t);-ps(j);zeros(length(q),1)];
-%        
-%         else
-%             f = [-lambda(t,j);1;zeros(length(q),1)];
-% %            f = [-lambda(t);ps(j);zeros(length(q),1)];
-%         
-%         end
-%         x = cplexlp(f,[],[],Aeq,beq,lb,[]);
-%        x = linprog(f,[],[],Aeq,beq,lb,[]);
-%         LP_cost_vec(j) = f'*x;
-%         z_sol(t,j) = x(1);
         [z_sol(t,j),LP_cost_vec(j)] = lp_power(lambda(t,j),q,c);
     end
     LP_cost(t) = ps'*LP_cost_vec;
@@ -56,40 +43,6 @@ for t = T:-1:1
         uGen(Lu+Ld,t) = 1; % turn on generator
         V(Lu+Ld,t) = LP_cost(t) + c_bar + h_bar + V(1,t+1);
     end
-    
-%     for l = 1:(Lu+Ld)
-%         if (l < Lu)
-%             % generator must be on
-%             % and next state is l+1
-%             % solve LP here to obtain power level
-%             V(l,t) = LP_cost(t) + c_bar + V(l+1,t+1); 
-%         elseif (l == Lu)
-%             % generator can be either on or off!
-%             % solve LP and DP update here
-%             if (V(l+1,t+1) <= (LP_cost(t) + c_bar + V(l,t+1)))
-%                 V(l,t) = V(l+1,t+1);
-% %                 z_sol(t,:) = 0;
-%             else
-%                 V(l,t) = LP_cost(t) + c_bar + V(l,t+1);
-%             end
-%         elseif (l < Lu+Ld) && (l > Lu)
-%             % generator must be off
-%             % and next state is l+1
-%             V(l,t) = V(l+1,t+1);
-% %             z_sol(t,:) = 0;
-%         elseif (l == Lu+Ld)
-%             % generator can either be on or off!
-%             % solve LP and DP update here
-%             if (V(l,t+1) <= (LP_cost(t) + c_bar + h_bar + V(1,t+1)))
-%                 V(l,t) = V(l,t+1);
-% %                 z_sol(t,:) = 0;
-%             else
-%                 V(l,t) = LP_cost(t) + c_bar + h_bar + V(1,t+1);
-%             end
-%         else
-%             error('something is wrong with DP updates');
-%         end
-%     end
 end
 
 cost = V(Lu+Ld,1);
