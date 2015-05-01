@@ -1,5 +1,5 @@
 function [best_cost,best_idx,opt_cost_vec,time,tot_time,L_g_cost,...
-    z_sol_avg,z_sol_std] = max_Lg_r(filename,maxIters,rho0,stepVec)
+    z_sol_avg] = max_Lg_r(filename,maxIters,rho0,stepVec)
 
 % load in from data file
 irgdx(filename);

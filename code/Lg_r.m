@@ -107,7 +107,7 @@ for t = T:-1:1
     % same as when first turned on: l = 1
     % turn on case:
     uGen2(Ld,t) = 1;
-    [V2(Ld,t),zIdx2(Ld,t)] = min(tmp_F - lambda(t,j).*tmp_P + c_bar + h_bar + V1(1,tmp_idx_n,t+1)');
+    [V2(Ld,t),zIdx2(Ld,t)] = min(tmp_F - lambda(t).*tmp_P + c_bar + h_bar + V1(1,tmp_idx_n,t+1)');
     zPow2(Ld,t) = tmp_P(zIdx2(Ld,t));
     % stay off if 
     if V2(Ld,t+1) < V2(Ld,t)

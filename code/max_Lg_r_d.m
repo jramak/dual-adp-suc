@@ -88,15 +88,15 @@ for i = 1:numGens
     best_uGen2{i} = nan(Ld(i),T);
 end
 
-poolobj = parpool('local',8);
+% poolobj = parpool('local',8);
 
 time = nan(numGens+2,1);
 
 ttot = tic;
 for k = 1:maxIters
     % all generators excluding buy and sell
-    parfor i = 1:numGens
-%     for i = 1:numGens
+%     parfor i = 1:numGens
+    for i = 1:numGens
         tind = tic;
         [L_g_cost(i),z_sol_avg(:,:,i),z_sol_std(:,:,i),V1{i},...
             uGen1{i},V2{i},uGen2{i}] = ...
@@ -151,6 +151,6 @@ for k = 1:maxIters
 end
 tot_time=toc(ttot);
 
-delete(poolobj);
+% delete(poolobj);
 
 save(['max_Lg_r_d_',filename]);
