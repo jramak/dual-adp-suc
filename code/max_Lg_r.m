@@ -95,8 +95,8 @@ time = nan(numGens+2,1);
 ttot = tic;
 for k = 1:maxIters
     % all generators excluding buy and sell
-%     parfor i = 1:numGens
-    for i = 1:numGens
+    parfor i = 1:numGens
+%     for i = 1:numGens
         tind = tic;
         [L_g_cost(i),z_sol_avg(:,i),V1{i},uGen1{i},V2{i},uGen2{i}] = ...
             Lg_r(q_min(i),q_max(i),c_bar(i),h_bar(i),Lu(i),Ld(i),lambda,...

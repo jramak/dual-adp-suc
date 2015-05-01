@@ -1,10 +1,15 @@
-$GDXin %data%
+$GDXin %probdata%
 Sets
-         i       generators              / 1 * 11 /
+         i       generators              / 1 * %subprob% /
          t       time periods            / 1 * 168 /
          k      max num piecewise pts   / 1 * 11 /
-         s       sample paths            / 1 * 1 /
+         s       sample paths            / 1 * 500 /
          ;
+
+Scalar
+         numGens       number of generators without buy and sell generators ;
+
+numGens = %subprob% - 2 ;
 
 alias(t,r) ;
 
@@ -75,8 +80,8 @@ Parameter
 $load d
 
 Parameter
-         D_s(t,s)   demand sample paths ;
-$load D_s
+         D_s_lb(t,s)   demand sample paths ;
+$load D_s_lb
 
 $GDXin
 
@@ -97,7 +102,7 @@ Equations
          ;
 
 cost ..                zc=e=sum((i,t),y(i,t)+c_bar(i)*u(i,t)+h_bar(i)*v(i,t));
-demEq(t) ..            sum(i$(ord(i) ne 11),z(i,t))-z('11',t)=e=d(t);
+demEq(t) ..            sum(i$(ord(i) ne %subprob%),z(i,t))-z('%subprob%',t)=e=d(t);
 turnOn1(i) ..          v(i,'1')=e=u(i,'1');
 turnOn2(i,t)$(ord(t) gt 1) .. v(i,t)=g=u(i,t)-u(i,t-1);
 turnOnEq1(i,t)$(ord(t) le Lu(i)) .. sum(r$(ord(r) ge 1 and ord(r) le ord(t)),v(i,r))=l=u(i,t);
@@ -113,11 +118,11 @@ PWLEq1(i,t) ..         sum(dynk(i,k),g(i,t,k)) =e= u(i,t);
 PWLEq2(i,t) ..         z(i,t) =e= sum(dynk(i,k),q(i,k)*g(i,t,k));
 PWLEq3(i,t) ..         y(i,t) =e= sum(dynk(i,k),c(i,k)*g(i,t,k));
 
+Model UC /all/ ;
 
-Model UC /cost,demEq,turnOn1,turnOn2,turnOnEq1,turnOnEq2,turnOffEq1,turnOffEq2,rampUpEq,rampDownEq,PWLEq1,PWLEq2,PWLEq3/ ;
-
+* 0.01% optimality gap and 1 hr time limit
 UC.optcr = 0.0001 ;
-*UC.optcr = 0 ;
+UC.reslim = 3600 ;
 
 * remove according to Steve because upper bound of 0 is stored
 *g.up(i,t,k)$(ord(k) gt numPts(i)) = 0 ;
@@ -130,6 +135,8 @@ Parameter time keep track of total time ;
 
 Parameter time_s(s) keep track of total time per sample path ;
 
+Parameters optca(s), optcr(s), modelstatus(s) ;
+
 Parameters       u_s(i,t,s)
                  v_s(i,t,s)
                  y_s(i,t,s)
@@ -138,12 +145,9 @@ Parameters       u_s(i,t,s)
                  zc_s(s)
                  ;
 
-*u.fx('1','2') = 1 ;
-
 time = timeelapsed ;
 loop(s,
-         d(t) = D_s(t,s) ;
-*         d(t) = 300 ;
+         d(t) = D_s_lb(t,s) ;
 
          time_s(s) = timeelapsed ;
 
@@ -159,7 +163,13 @@ loop(s,
          z_s(i,t,s) = z.l(i,t) ;
          g_s(i,t,k,s) = g.l(i,t,k) ;
          zc_s(s) = zc.l ;
+
+         optca(s) = abs(UC.objest - UC.objval) ;
+         optcr(s) = optca(s) / max(abs(UC.objest),abs(UC.objval)) ;
+         modelstatus(s) = UC.Modelstat ;
 );
 time = timeelapsed - time ;
 
 cost_tot(s) = sum(i,cost_gen(i,s)) ;
+
+execute_unloadIdx 'lb_per_info.gdx', cost_tot, cost_gen, time, time_s, optca, optcr, modelstatus, u_s, v_s, y_s, z_s, g_s, zc_s ;
