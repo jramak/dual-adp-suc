@@ -13,7 +13,7 @@ Lu = Lu;
 numGens = length(Lu) - 2; % number of generators not including buy/sell
 
 [status,result]=system(['gams per_info_mip --probdata=',...
-            filename,' --subprob=',num2str(numGens+2),' mip=cplex lo=3']);
+            filename,' --subprob=',num2str(numGens+2),' mip=cplex o=/dev/null lo=0']);
         
 % modelstatus = 8 means integer solution found
 % make sure less than 0.01% optimality gap for all runs
