@@ -1,10 +1,16 @@
-$GDXin %data%
+$GDXin %probdata%
 Sets
-         i       generators              / 1 * 11 /
+         i       generators              / 1 * %subprob% /
          t       time periods            / 1 * 168 /
-         k      max num piecewise pts   / 1 * 11 /
-         s       sample paths            / 1 * 1 /
+         k       max num piecewise pts for buy sell gen  / 1 * 11 /
+         kk      max piecewise pts for fut reg gen       / 1 * 100 /
+         s       sample paths            / 1 * 500 /
          ;
+
+Scalar
+         numGens       number of generators without buy and sell generators ;
+
+numGens = %subprob% - 2 ;
 
 alias(t,t1,t2) ;
 *alias(t,t2) ;
@@ -24,12 +30,14 @@ Variables
          v(i,t)          turn on variable
          y(i,t)          piecewise linear cost
          z(i,t)          real power from generator i in time period t
-         g(i,t,k)        variables for piecewise linear cost
+         g(i,t,kk)       variables for piecewise linear cost
+         gb(i,t,k)       pwl for buy generator
+         gs(i,t,k)       pwl for sell generator
          zc              objective (total errors)
          ;
 
 Binary Variables u, v ;
-Positive Variable y, z, g ;
+Positive Variable y, z, g, gb, gs ;
 
 Parameter
          q(i,k)        x coordinates quantity of piecewise function ;
@@ -46,6 +54,14 @@ $load c_bar
 Parameter
          h_bar(i)      generator start up cost ;
 $load h_bar
+
+Parameter
+         Pow(kk,i)     possible power levels for each generator ;
+$load Pow
+
+Parameter
+         Feval(kk,i)   possible cost function vals for generator ;
+$load Feval
 
 Parameter
          Lu(i)   generator minimum up time ;
@@ -79,8 +95,8 @@ Parameter d_save(t) copy of d(t) ;
 d_save(t) = d(t) ;
 
 Parameter
-         D_s(t,s)   demand sample paths ;
-$load D_s
+         D_s_ub(t,s)   demand sample paths ;
+$load D_s_ub
 
 $GDXin
 
@@ -97,13 +113,22 @@ Equations
          turnOffEq2(i,t)       second set of turn off inequalities
          rampUpEq(i,t)         ramp up constraints
          rampDownEq(i,t)       ramp down constraints
+
          PWLEq1(i,t)           1st set of PWL eq
          PWLEq2(i,t)           2nd set of PWL eq
          PWLEq3(i,t)           3rd set of PWL eq
+
+         PWLEq1b(i,t)          1st set of PWL eq for buy gen
+         PWLEq2b(i,t)          2nd set of PWL eq for buy gen
+         PWLEq3b(i,t)          3rd set of PWL eq for buy gen
+
+         PWLEq1s(i,t)          1st set of PWL eq for sell gen
+         PWLEq2s(i,t)          2nd set of PWL eq for sell gen
+         PWLEq3s(i,t)          3rd set of PWL eq for sell gen
          ;
 
 cost ..                zc=e=sum((i,t),y(i,t)+c_bar(i)*u(i,t)+h_bar(i)*v(i,t));
-demEq(t) ..            sum(i$(ord(i) ne 11),z(i,t))-z('11',t)=e=d(t);
+demEq(t) ..            sum(i$(ord(i) ne %subprob%),z(i,t))-z('%subprob%',t)=e=d(t);
 turnOn1(i) ..          v(i,'1')=e=u(i,'1');
 turnOn2(i,t)$(ord(t) gt 1) .. v(i,t)=g=u(i,t)-u(i,t-1);
 turnOnEq1(i,t)$(ord(t) le Lu(i)) .. sum(t1$(ord(t1) ge 1 and ord(t1) le ord(t)),v(i,t1))=l=u(i,t);
@@ -112,24 +137,30 @@ turnOffEq1(i,t)$(ord(t) le Ld(i)) .. sum(t1$(ord(t1) ge 1 and ord(t1) le ord(t))
 turnOffEq2(i,t)$(ord(t) gt Ld(i)) .. sum(t1$(ord(t1) ge ord(t)-Ld(i)+1 and ord(t1) le ord(t)),v(i,t1))=l=1-u(i,t-Ld(i));
 rampUpEq(i,t) .. z(i,t) =l= z(i,t-1) + Ru(i) + v(i,t)*q_min(i);
 rampDownEq(i,t) .. z(i,t-1) - Rd(i) - (1-u(i,t))*q_min(i) =l= z(i,t);
-*PWLEq1(i,t) ..         sum(dynk(i,k),(g(i,t,k)$dynk(i,k))) =e= u(i,t);
-*PWLEq2(i,t) ..         z(i,t) =e= sum(dynk(i,k),(q(i,k)$dynk(i,k))*(g(i,t,k)$dynk(i,k)));
-*PWLEq3(i,t) ..         y(i,t) =e= sum(dynk(i,k),(c(i,k)$dynk(i,k))*(g(i,t,k)$dynk(i,k)));
-PWLEq1(i,t) ..         sum(dynk(i,k),g(i,t,k)) =e= u(i,t);
-PWLEq2(i,t) ..         z(i,t) =e= sum(dynk(i,k),q(i,k)*g(i,t,k));
-PWLEq3(i,t) ..         y(i,t) =e= sum(dynk(i,k),c(i,k)*g(i,t,k));
 
-Model UC /cost,demEq,turnOn1,turnOn2,turnOnEq1,turnOnEq2,turnOffEq1,turnOffEq2,rampUpEq,rampDownEq,PWLEq1,PWLEq2,PWLEq3/ ;
+PWLEq1(i,t)$(ord(i) le numGens) .. sum(kk,g(i,t,kk)) =e= u(i,t);
+PWLEq2(i,t)$(ord(i) le numGens) .. z(i,t) =e= sum(kk,Pow(kk,i)*g(i,t,kk));
+PWLEq3(i,t)$(ord(i) le numGens) .. y(i,t) =e= sum(kk,Feval(kk,i)*g(i,t,kk));
 
-*UC.optcr = 0.005 ;
-UC.optcr = 0 ;
+* for buy generator
+PWLEq1b(i,t)$(ord(i) eq (numGens+1)) .. sum(dynk(i,k),gb(i,t,k)) =e= u(i,t);
+PWLEq2b(i,t)$(ord(i) eq (numGens+1)) .. z(i,t) =e= sum(dynk(i,k),q(i,k)*gb(i,t,k));
+PWLEq3b(i,t)$(ord(i) eq (numGens+1)) .. y(i,t) =e= sum(dynk(i,k),c(i,k)*gb(i,t,k));
+
+* for sell generator
+PWLEq1s(i,t)$(ord(i) eq (numGens+2)) .. sum(dynk(i,k),gs(i,t,k)) =e= u(i,t);
+PWLEq2s(i,t)$(ord(i) eq (numGens+2)) .. z(i,t) =e= sum(dynk(i,k),q(i,k)*gs(i,t,k));
+PWLEq3s(i,t)$(ord(i) eq (numGens+2)) .. y(i,t) =e= sum(dynk(i,k),c(i,k)*gs(i,t,k));
+
+Model UC /all/ ;
+
+* 0.01% optimality gap and 1 hr time limit
+*UC.optcr = 0 ;
+UC.optcr = 0.0001 ;
+UC.reslim = 3600 ;
 
 * remove according to Steve because upper bound of 0 is stored
 *g.up(i,t,k)$(ord(k) gt numPts(i)) = 0 ;
-
-*display d;
-
-*display u.l,v.l,y.l,z.l,g.l;
 
 Parameter cost_gen(i,s) cost incurred for each generator for each sample path ;
 
@@ -138,11 +169,15 @@ Parameter cost_tot(s) cost incurred for each sample path ;
 Parameter time_s(s) keep track of total time per sample path ;
 Parameter time_s_t(s,t) keep track of total time per sample path per time period;
 
+Parameters optca(t,s), optcr(t,s), modelstatus(t,s) ;
+
 Parameters       u_s(i,t,s)
                  v_s(i,t,s)
                  y_s(i,t,s)
                  z_s(i,t,s)
-                 g_s(i,t,k,s)
+                 g_s(i,t,kk,s)
+                 gb_s(i,t,k,s)
+                 gs_s(i,t,k,s)
                  zc_s(s)
                  tmp_idx(t2)
                  tmp_cost(t2)
@@ -150,12 +185,8 @@ Parameters       u_s(i,t,s)
                  tmp_z(t2)
                  ;
 
-*Solve UC using mip minimizing zc ;
-*u.fx(i,t) = u.l(i,t) ;
-
 * force buy and sell generators to be turned on
-u.fx('10',t) = 1 ;
-u.fx('11',t) = 1 ;
+u.fx(i,t)$(ord(i) gt numGens) = 1 ;
 
 cost_gen(i,s) = 0;
 
@@ -168,10 +199,9 @@ loop(s,
 
          loop(t2,
                  u.fx(i,t2) = u.l(i,t2) ;
-                 u.fx('10',t2) = 1 ;
-                 u.fx('11',t2) = 1 ;
+                 u.fx(i,t2)$(ord(i) gt numGens) = 1;
 
-                 d(t2) = D_s(t2,s) ;
+                 d(t2) = D_s_ub(t2,s) ;
 
                  Solve UC using mip minimizing zc ;
 
@@ -179,16 +209,18 @@ loop(s,
 
                  cost_gen(i,s)=cost_gen(i,s)+y.l(i,t2)+c_bar(i)*u.l(i,t2)+h_bar(i)*v.l(i,t2) ;
 
-* fix generator integer decisions and power level decisions
-*                 u.fx(i,t2) = u.l(i,t2) ;
-* Positive Variable y, z, g ;
-
                  u_s(i,t2,s) = u.l(i,t2) ;
                  v_s(i,t2,s) = v.l(i,t2) ;
                  y_s(i,t2,s) = y.l(i,t2) ;
                  z_s(i,t2,s) = z.l(i,t2) ;
-                 g_s(i,t2,k,s) = g.l(i,t2,k) ;
+                 g_s(i,t2,kk,s) = g.l(i,t2,kk) ;
+                 gb_s(i,t2,k,s) = gb.l(i,t2,k) ;
+                 gs_s(i,t2,k,s) = gs.l(i,t2,k) ;
                  zc_s(s) = zc.l ;
+
+                 optca(t2,s) = abs(UC.objest - UC.objval) ;
+                 optcr(t2,s) = optca(t2,s) / max(abs(UC.objest),abs(UC.objval)) ;
+                 modelstatus(t2,s) = UC.Modelstat ;
          );
 
          u.lo(i,t) = 0 ;
@@ -205,6 +237,4 @@ cost_tot(s) = sum(i,cost_gen(i,s)) ;
 
 time = timeelapsed - time ;
 
-display D_s ;
-
-display u.l,v.l,y.l,z.l,g.l;
+execute_unloadIdx 'ub_expdem_mip.gdx', cost_tot, cost_gen, time, time_s, optca, optcr, modelstatus, u_s, v_s, y_s, z_s, g_s, zc_s ;
