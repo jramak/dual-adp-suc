@@ -1,0 +1,57 @@
+#!/bin/bash
+# first argument is a file containing list of gams statements
+#   or the name of the gams job to run (e.g. trnsport to run gams trnsport)
+# second optional argument is a "quoted" comma separated list of files to be transferred over
+# third optional argument is a number to use for labeling output
+# eg condor_gams trnsport.run "trnsport.gms,foo.gms" 
+# or condor_gams trnsport
+# or condor_gams trnsport trnsport.gms 
+# or condor_gams trnsport trnsport.gms 1
+
+if [ -z $REQUEST_CPUS ]; then
+  REQUEST_CPUS=1
+fi
+
+if [ -n "${3}" ]; then
+  id=${3};
+else
+  id=$$;
+fi
+echo "universe = vanilla"   > gams.cmd
+echo "executable = runit$id.sh" >> gams.cmd
+echo "error = gams$id.err" >> gams.cmd
+echo "output = gams$id.out" >> gams.cmd
+echo "log = gams.log" >> gams.cmd
+echo "match_list_length = 5" >> gams.cmd
+echo "Notification = NEVER" >> gams.cmd
+echo "+threshold_hours = 6"  >> gams.cmd
+echo "should_transfer_files = YES" >> gams.cmd
+if [ -n "${2}" ]; then
+  echo "transfer_input_files = ${2}" >> gams.cmd
+elif [ -e ${1}.gms ]; then
+  echo "transfer_input_files = ${1}.gms" >> gams.cmd
+else
+  echo "no input file found";
+  exit;
+fi
+echo "when_to_transfer_output = ON_EXIT" >> gams.cmd
+echo "+InteractiveJob = FALSE"  >> gams.cmd
+echo "request_cpus = ${REQUEST_CPUS}" >> gams.cmd
+echo '+Group = "WID"'  >> gams.cmd
+echo '+WIDsTheme = "Optimization"' >> gams.cmd
+echo "skip_filechecks = true" >> gams.cmd
+echo "queue" >> gams.cmd
+
+echo "#!/bin/bash"              > runit$id.sh
+echo 'export PATH="/mnt/ws/progs/gams/current:$PATH"'   >> runit$id.sh
+echo 'export LD_LIBRARY_PATH="/mnt/ws/progs/gams/current:$LD_LIBRARY_PATH"'   >> runit$id.sh
+#echo 'echo $HOSTNAME' >> runit$id.sh
+if [ -e ${1} ]; then 
+  cat ${1} >> runit$id.sh
+else
+  echo "gams " ${1} >> runit$id.sh
+fi
+#echo "sleep 3600" >> runit$id.sh
+chmod +x runit$id.sh;
+
+condor_submit gams.cmd;

@@ -155,8 +155,8 @@ PWLEq3s(i,t)$(ord(i) eq (numGens+2)) .. y(i,t) =e= sum(dynk(i,k),c(i,k)*gs(i,t,k
 Model UC /all/ ;
 
 * 0.01% optimality gap and 1 hr time limit
-*UC.optcr = 0 ;
-UC.optcr = 0.0001 ;
+UC.optcr = 0 ;
+*UC.optcr = 0.0001 ;
 UC.reslim = 3600 ;
 
 * remove according to Steve because upper bound of 0 is stored
