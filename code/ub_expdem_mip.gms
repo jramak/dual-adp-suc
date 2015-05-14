@@ -2,9 +2,9 @@ $GDXin %probdata%
 Sets
          i       generators              / 1 * %subprob% /
          t       time periods            / 1 * 168 /
-         k       max num piecewise pts for buy sell gen  / 1 * 11 /
-         kk      max piecewise pts for fut reg gen       / 1 * 100 /
-         s       sample paths            / 1 * 500 /
+         k       max num piecewise pts for buy sell gen  / 1 * 22 /
+*         kk      max piecewise pts for fut reg gen       / 1 * 100 /
+         s       sample paths            / 1 * 50 /
          ;
 
 Scalar
@@ -18,10 +18,10 @@ alias(t,t1,t2) ;
 Set      dynk(i,k) ;
 
 Parameter
-         numPts(i)     number of valid cost pts for each generator ;
-$load numPts
+         numPts_n(i)     number of valid cost pts for each generator ;
+$load numPts_n
 
-dynk(i,k) = YES$(ord(k) le numPts(i));
+dynk(i,k) = YES$(ord(k) le numPts_n(i));
 
 *display k ;
 
@@ -30,22 +30,29 @@ Variables
          v(i,t)          turn on variable
          y(i,t)          piecewise linear cost
          z(i,t)          real power from generator i in time period t
-         g(i,t,kk)       variables for piecewise linear cost
-         gb(i,t,k)       pwl for buy generator
-         gs(i,t,k)       pwl for sell generator
+*         g(i,t,kk)       variables for piecewise linear cost
+         g(i,t,k)       variables for piecewise linear cost
          zc              objective (total errors)
          ;
 
 Binary Variables u, v ;
-Positive Variable y, z, g, gb, gs ;
+Positive Variable y, z, g ;
+
+*Parameter
+*         q(i,k)        x coordinates quantity of piecewise function ;
+*$load q
+*
+*Parameter
+*         c(i,k)        y coordinates cost of piecewise function ;
+*$load c
 
 Parameter
-         q(i,k)        x coordinates quantity of piecewise function ;
-$load q
+         qn(i,k)        x coordinates quantity of piecewise function ;
+$load qn
 
 Parameter
-         c(i,k)        y coordinates cost of piecewise function ;
-$load c
+         cn(i,k)        y coordinates cost of piecewise function ;
+$load cn
 
 Parameter
          c_bar(i)      minimum generator turn on cost ;
@@ -55,13 +62,13 @@ Parameter
          h_bar(i)      generator start up cost ;
 $load h_bar
 
-Parameter
-         Pow(kk,i)     possible power levels for each generator ;
-$load Pow
-
-Parameter
-         Feval(kk,i)   possible cost function vals for generator ;
-$load Feval
+*Parameter
+*         Pow(kk,i)     possible power levels for each generator ;
+*$load Pow
+*
+*Parameter
+*         Feval(kk,i)   possible cost function vals for generator ;
+*$load Feval
 
 Parameter
          Lu(i)   generator minimum up time ;
@@ -118,13 +125,13 @@ Equations
          PWLEq2(i,t)           2nd set of PWL eq
          PWLEq3(i,t)           3rd set of PWL eq
 
-         PWLEq1b(i,t)          1st set of PWL eq for buy gen
-         PWLEq2b(i,t)          2nd set of PWL eq for buy gen
-         PWLEq3b(i,t)          3rd set of PWL eq for buy gen
-
-         PWLEq1s(i,t)          1st set of PWL eq for sell gen
-         PWLEq2s(i,t)          2nd set of PWL eq for sell gen
-         PWLEq3s(i,t)          3rd set of PWL eq for sell gen
+*         PWLEq1b(i,t)          1st set of PWL eq for buy gen
+*         PWLEq2b(i,t)          2nd set of PWL eq for buy gen
+*         PWLEq3b(i,t)          3rd set of PWL eq for buy gen
+*
+*         PWLEq1s(i,t)          1st set of PWL eq for sell gen
+*         PWLEq2s(i,t)          2nd set of PWL eq for sell gen
+*         PWLEq3s(i,t)          3rd set of PWL eq for sell gen
          ;
 
 cost ..                zc=e=sum((i,t),y(i,t)+c_bar(i)*u(i,t)+h_bar(i)*v(i,t));
@@ -138,25 +145,29 @@ turnOffEq2(i,t)$(ord(t) gt Ld(i)) .. sum(t1$(ord(t1) ge ord(t)-Ld(i)+1 and ord(t
 rampUpEq(i,t) .. z(i,t) =l= z(i,t-1) + Ru(i) + v(i,t)*q_min(i);
 rampDownEq(i,t) .. z(i,t-1) - Rd(i) - (1-u(i,t))*q_min(i) =l= z(i,t);
 
-PWLEq1(i,t)$(ord(i) le numGens) .. sum(kk,g(i,t,kk)) =e= u(i,t);
-PWLEq2(i,t)$(ord(i) le numGens) .. z(i,t) =e= sum(kk,Pow(kk,i)*g(i,t,kk));
-PWLEq3(i,t)$(ord(i) le numGens) .. y(i,t) =e= sum(kk,Feval(kk,i)*g(i,t,kk));
+*PWLEq1(i,t)$(ord(i) le numGens) .. sum(kk,g(i,t,kk)) =e= u(i,t);
+*PWLEq2(i,t)$(ord(i) le numGens) .. z(i,t) =e= sum(kk,Pow(kk,i)*g(i,t,kk));
+*PWLEq3(i,t)$(ord(i) le numGens) .. y(i,t) =e= sum(kk,Feval(kk,i)*g(i,t,kk));
 
-* for buy generator
-PWLEq1b(i,t)$(ord(i) eq (numGens+1)) .. sum(dynk(i,k),gb(i,t,k)) =e= u(i,t);
-PWLEq2b(i,t)$(ord(i) eq (numGens+1)) .. z(i,t) =e= sum(dynk(i,k),q(i,k)*gb(i,t,k));
-PWLEq3b(i,t)$(ord(i) eq (numGens+1)) .. y(i,t) =e= sum(dynk(i,k),c(i,k)*gb(i,t,k));
+PWLEq1(i,t) .. sum(dynk(i,k),g(i,t,k)) =e= u(i,t);
+PWLEq2(i,t) .. z(i,t) =e= sum(dynk(i,k),qn(i,k)*g(i,t,k));
+PWLEq3(i,t) .. y(i,t) =e= sum(dynk(i,k),cn(i,k)*g(i,t,k));
 
-* for sell generator
-PWLEq1s(i,t)$(ord(i) eq (numGens+2)) .. sum(dynk(i,k),gs(i,t,k)) =e= u(i,t);
-PWLEq2s(i,t)$(ord(i) eq (numGens+2)) .. z(i,t) =e= sum(dynk(i,k),q(i,k)*gs(i,t,k));
-PWLEq3s(i,t)$(ord(i) eq (numGens+2)) .. y(i,t) =e= sum(dynk(i,k),c(i,k)*gs(i,t,k));
+** for buy generator
+*PWLEq1b(i,t)$(ord(i) eq (numGens+1)) .. sum(dynk(i,k),gb(i,t,k)) =e= u(i,t);
+*PWLEq2b(i,t)$(ord(i) eq (numGens+1)) .. z(i,t) =e= sum(dynk(i,k),qn(i,k)*gb(i,t,k));
+*PWLEq3b(i,t)$(ord(i) eq (numGens+1)) .. y(i,t) =e= sum(dynk(i,k),cn(i,k)*gb(i,t,k));
+*
+** for sell generator
+*PWLEq1s(i,t)$(ord(i) eq (numGens+2)) .. sum(dynk(i,k),gs(i,t,k)) =e= u(i,t);
+*PWLEq2s(i,t)$(ord(i) eq (numGens+2)) .. z(i,t) =e= sum(dynk(i,k),qn(i,k)*gs(i,t,k));
+*PWLEq3s(i,t)$(ord(i) eq (numGens+2)) .. y(i,t) =e= sum(dynk(i,k),cn(i,k)*gs(i,t,k));
 
 Model UC /all/ ;
 
 * 0.01% optimality gap and 1 hr time limit
-UC.optcr = 0 ;
-*UC.optcr = 0.0001 ;
+*UC.optcr = 0 ;
+UC.optcr = 0.0001 ;
 UC.reslim = 3600 ;
 
 * remove according to Steve because upper bound of 0 is stored
@@ -175,9 +186,7 @@ Parameters       u_s(i,t,s)
                  v_s(i,t,s)
                  y_s(i,t,s)
                  z_s(i,t,s)
-                 g_s(i,t,kk,s)
-                 gb_s(i,t,k,s)
-                 gs_s(i,t,k,s)
+                 g_s(i,t,k,s)
                  zc_s(s)
                  tmp_idx(t2)
                  tmp_cost(t2)
@@ -213,9 +222,7 @@ loop(s,
                  v_s(i,t2,s) = v.l(i,t2) ;
                  y_s(i,t2,s) = y.l(i,t2) ;
                  z_s(i,t2,s) = z.l(i,t2) ;
-                 g_s(i,t2,kk,s) = g.l(i,t2,kk) ;
-                 gb_s(i,t2,k,s) = gb.l(i,t2,k) ;
-                 gs_s(i,t2,k,s) = gs.l(i,t2,k) ;
+                 g_s(i,t2,k,s) = g.l(i,t2,k) ;
                  zc_s(s) = zc.l ;
 
                  optca(t2,s) = abs(UC.objest - UC.objval) ;

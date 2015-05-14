@@ -89,6 +89,8 @@ end % not completely the same as d but that's, we can check later
 % use normalized probability distribution
 p_s = p_cs(1,:);
 
+quadPts = length(p_s); % number of quadrature points in distribution
+
 % generate demand 100 scenarios:
 scenarios = 500;
 D_idx_lb = gendist(p_s,T,scenarios);
@@ -189,14 +191,56 @@ Ru = [60.*r_RampUpRate((numOffers+1):(numOffers+numGens));...
 % end
 
 % q(gen#,demand pts), c(gen#,cost pts)
-z_inc = nan(size(q_min));
-nPts = 100; 
+% z_inc = nan(size(q_min));
+nPts = 50; 
 Pow = nan(nPts,length(q_min));
 Feval = nan(nPts,length(q_min));
-for i = 1:length(z_inc)
+for i = 1:(numGens+2)
    [Pow(:,i),Feval(:,i)] = eval_pwl(q(i,1:numPts(i))',c(i,1:numPts(i))',q_min(i),q_max(i),nPts); 
-   z_inc(i) = Pow(2,i) - Pow(1,i);
+%     z_inc(i) = Pow(2,i) - Pow(1,i);
 end
+
+Pstep = (Pow(2,1:numGens) - Pow(1,1:numGens))';
+
+% come up with fewer breakpoints for use in MIP in
+% perfect information lower bound and expection upper bound
+% iterate through and drop breakpoint in pwl function that are not
+% needed
+assert(all(numPts >= 2));
+assert(max(numPts)>=2);
+maxPts = 2+2*(max(numPts)-2);
+qn = inf(length(q_min),maxPts);
+cn = inf(length(q_min),maxPts);
+qn(:,1) = q(:,1);
+cn(:,1) = c(:,1);
+numPts_n = 1.*ones(length(q_min),1); % initialize
+delta_y = Feval(2,:) - Feval(1,:);
+myeps = 0.00001; 
+for i = 1:numGens
+    for j = 3:nPts
+        if ~(abs(Feval(j,i) - Feval(j-1,i) - delta_y(i)) <= myeps)
+            % need to use the previous point
+            numPts_n(i) = numPts_n(i) + 1;
+            qn(i,numPts_n(i)) = Pow(j-1,i);
+            cn(i,numPts_n(i)) = Feval(j-1,i);
+            delta_y(i) = Feval(j,i) - Feval(j-1,i);            
+        end
+    end
+    numPts_n(i) = numPts_n(i) + 1;
+    qn(i,numPts_n(i)) = Pow(nPts,i);
+    cn(i,numPts_n(i)) = Feval(nPts,i);
+end
+[~,max_pwl_pts] = size(q);
+qn(numGens+1,1:(min(maxPts,max_pwl_pts))) = q(numGens+1,...
+    1:(min(maxPts,max_pwl_pts)));
+qn(numGens+2,1:(min(maxPts,max_pwl_pts))) = q(numGens+2,...
+    1:(min(maxPts,max_pwl_pts)));
+cn(numGens+1,1:(min(maxPts,max_pwl_pts))) = c(numGens+1,...
+    1:(min(maxPts,max_pwl_pts)));
+cn(numGens+2,1:(min(maxPts,max_pwl_pts))) = c(numGens+2,...
+    1:(min(maxPts,max_pwl_pts)));
+numPts_n(numGens+1) = numPts(numGens+1);
+numPts_n(numGens+2) = numPts(numGens+2);
 
 % x_s = 168 by 10 matrix representing for each time period possible demands
 % D_s_lb (ub) = 168 by 100 matrix for lower (upper) bound runs
@@ -208,4 +252,5 @@ iwgdx(['uc15_',num2str(maxDemand),'md_',num2str(percent_sig*100),...
     'D_s_ub',D_s_ub,'D_s_idx_ub',D_idx_ub,'x_s',x_s,'p_s',p_s,...
     'q_min',q_min,'q_max',q_max,'maxDemand',maxDemand,...
     'percent_sig',percent_sig,'Rd',Rd,'Ru',Ru,'nPts',nPts,...
-    'z_inc',z_inc,'Pow',Pow,'Feval',Feval);
+    'Pow',Pow,'Feval',Feval,'numGens',numGens,'T',T,'quadPts',quadPts,...
+    'Pstep',Pstep,'qn',qn,'cn',cn,'numPts_n',numPts_n);
