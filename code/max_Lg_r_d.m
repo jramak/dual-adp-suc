@@ -48,7 +48,7 @@ for i = 1:T
 end
 
 lambda = lambda_init;
-nPts = 100; % number of function evaluation points for each generator
+nPts = 50; % number of function evaluation points for each generator
 paths = 1000; % number of sample paths for gradient evaluation
 z_sol_std = nan(T,length(p_s),numGens);
 z_sol_avg = nan(T,length(p_s),numGens+2);

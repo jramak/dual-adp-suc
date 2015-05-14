@@ -1,7 +1,7 @@
 Sets
          i       generators                              / 1 * %subprob% /
          k       max num piecewise pts                   / 1 * 11 /
-         kk      max piecewise pts for fut val func      / 1 * 100 /
+         kk      max piecewise pts for fut val func      / 1 * %nPts% /
          ;
 
 Scalar

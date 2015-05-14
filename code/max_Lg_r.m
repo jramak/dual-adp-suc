@@ -50,7 +50,7 @@ end
 % initialization for time-dependent lambda (not history dependent)
 lambda = lambda_init*p_s;
 
-nPts = 100; % number of function evaluation points for each generator
+nPts = 50; % number of function evaluation points for each generator
 z_sol_avg = nan(T,numGens+2);
 % store value function and on/off decisions of relaxed problem
 % for each generator

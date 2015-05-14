@@ -86,7 +86,7 @@ for k = 1:numSamples
             'u_fx_lo',[u_fx_lo;1;1],'u_fx_hi',[u_fx_hi;1;1],'Von',Von,...
             'Voff',Voff,'dj',x_s(t,:)');
         [status,result]=system(['gams ub_fv_mip --probdata=',...
-            filename,' --subprob=',num2str(numGens+2),' mip=cplex lo=3']);
+            filename,' --subprob=',num2str(numGens+2),' --nPts=',num2str(nPts),' mip=cplex lo=3']);
         irgdx('ubout.gdx');
         
         assert(abs(optca) <= myeps2);

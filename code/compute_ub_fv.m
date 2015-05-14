@@ -110,7 +110,7 @@ for k = 1:numSamples
             'u_l',[u_l;1;1],'v_l',[v_l;1;1],'d',D_s_ub(t,k),...
             'Von',Von,'Voff',Voff);
         [status,result]=system(['gams ub_fv --probdata=',filename,...
-            ' --subprob=',num2str(numGens+2),' mip=cplex lo=3']);
+            ' --subprob=',num2str(numGens+2),' --nPts=',num2str(nPts),' mip=cplex lo=3']);
         irgdx('ubout.gdx');
         
         assert(abs(optca) <= myeps2);
