@@ -1,0 +1,26 @@
+#!/bin/bash
+
+#files=uc15_1500md_15sig.gdx
+#for file in $files
+for i in {1500..4500..1000}
+do
+for j in {15..25..5}
+do
+	file=uc15_${i}md_${j}sig
+	mkdir ub_fv_$file
+	cd ub_fv_$file
+	cp ~/jim_master_code/numerical_runs/gen15/lb_bounds/lb_${file}/max_Lg_r_d_${file}.mat .
+	cp ~/jim_master_code/code/startup.m .
+	cp ~/jim_master_code/code/compute_ub_fv.m .
+	cp ~/jim_master_code/code/ub_fv.gms .
+	cp ~/jim_master_code/data/gen15/${file}.gdx .
+	cp ~/jim_master_code/code/Lg_condor.run .
+	cp ~/jim_master_code/code/condor_gams .
+
+        echo "[ub_cost,ub_time,optca_mat,modelstat_mat,tot_run_time] = compute_ub_fv('$file'); save ub_fv_${file};" > script.m
+#        echo "[best_cost,best_idx,opt_cost_vec,time,tot_time,L_g_cost,z_sol_avg,z_sol_std] = max_Lg_r_d('$file',1,50/${i},(0.99).^(0))" > script.m
+ 
+	./condor_gams Lg_condor.run "script.m,compute_ub_fv.m,ub_fv.gms,startup.m,max_Lg_r_d_${file}.mat,${file}.gdx" &
+	cd ..
+done
+done

@@ -1,0 +1,12 @@
+hostname
+echo `pwd`
+#echo "[best_cost,best_idx,opt_cost_vec,time,tot_time,L_g_cost,z_sol_avg,z_sol_std]=max_lagrangian2_r(data.gdx,1,1,1)" > run_script.m
+#echo "a = 4" > run_script.m
+
+unset DISPLAY
+
+#matlab < script.m > matlab.out 2>&1 &
+matlab < script.m 2>&1
+#which matlab
+
+#gams test.gms
