@@ -167,7 +167,8 @@ Model UC /all/ ;
 
 * 0.01% optimality gap and 1 hr time limit
 *UC.optcr = 0 ;
-UC.optcr = 0.0001 ;
+* 0.5% optimality gap and 1 hr time limit
+UC.optcr = 0.005 ;
 UC.reslim = 3600 ;
 
 * remove according to Steve because upper bound of 0 is stored

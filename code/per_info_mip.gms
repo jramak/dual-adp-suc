@@ -4,7 +4,7 @@ Sets
          t       time periods            / 1 * 168 /
          k       max num piecewise pts for buy sell gen  / 1 * 22 /
 *         kk      max piecewise pts for fut reg gen       / 1 * 100 /
-         s       sample paths            / 1 * 500 /
+         s       sample paths            / 1 * 100 /
          ;
 
 Scalar
@@ -161,7 +161,8 @@ PWLEq3(i,t) .. y(i,t) =e= sum(dynk(i,k),cn(i,k)*g(i,t,k));
 Model UC /all/ ;
 
 * 0.01% optimality gap and 1 hr time limit
-UC.optcr = 0.0001 ;
+* 0.5% optimality gap and 1 hr time limit
+UC.optcr = 0.005 ;
 UC.reslim = 3600 ;
 
 * remove according to Steve because upper bound of 0 is stored

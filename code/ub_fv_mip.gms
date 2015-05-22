@@ -164,8 +164,10 @@ v.fx(i)$(ord(i) gt numGens) = 1 ;
 
 Model UC /all/ ;
 
-UC.optca = 0 ;
-UC.optcr = 0 ;
+*UC.optca = 0 ;
+*UC.optcr = 0 ;
+* 0.5% optimality gap
+UC.optcr = 0.005 ; 
 
 time = timeelapsed ;
 
@@ -191,4 +193,4 @@ parameter u_l(i), z_l(i,j) ;
 u_l(i) = u.l(i) ;
 z_l(i,j) = z.l(i,j) ;
 
-execute_unloadIdx 'ubout.gdx', tot_cost, u_l, z_l, optca, time, modelstatus ;
+execute_unloadIdx 'ubout.gdx', tot_cost, u_l, z_l, optca, optcr, time, modelstatus ;

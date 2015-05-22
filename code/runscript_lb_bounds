@@ -25,7 +25,7 @@ do
 	cp ~/jim_master_code/code/Lg_condor.run .
 	cp ~/jim_master_code/code/condor_gams_8CPU_4MEM_12DISK .
 
-        echo "lb_main('${file%%.*}',500,50/${i},(0.99).^(0:499))" > script.m
+        echo "lb_main('${file%%.*}',250,50/${i},(0.99).^(0:249))" > script.m
 #        echo "lb_main('${file%%.*}',1,50/${i},(0.99).^(0))" > script.m
  
 	./condor_gams_8CPU_4MEM_12DISK Lg_condor.run "script.m,lb_main.m,per_info_mip.gms,max_Lg_r_d.m,max_Lg_r.m,Lg_r_d.m,Lg_r.m,Lg_d.m,Lg.m,eval_pwl.m,lp_power.m,gendist.m,startup.m,$file" &
