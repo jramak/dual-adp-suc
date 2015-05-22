@@ -90,7 +90,7 @@ for k = 1:numSamples
         irgdx('ubout.gdx');
         
         assert(abs(optcr) <= myeps2);
-        assert(abs(modelstatus - 1) <= myeps);
+        assert((abs(modelstatus - 8) <= myeps) | (abs(modelstatus - 1) <= myeps));
         
         % store results from optimization
         ub_cost(t,k) = tot_cost(D_s_idx_ub(t,k));

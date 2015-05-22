@@ -114,7 +114,7 @@ for k = 1:numSamples
         irgdx('ubout.gdx');
         
         assert(abs(optcr) <= myeps2);
-        assert(abs(modelstatus - 1) <= myeps);
+        assert((abs(modelstatus - 8) <= myeps) | (abs(modelstatus - 1) <= myeps));
         
         ub_cost(t,k) = tot_cost;
         ub_time(t,k) = time; 
