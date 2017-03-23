@@ -1,6 +1,6 @@
 function lb_main(filename,maxIters,rho0,stepVec)
 
-poolobj = parpool('local',8);
+poolobj = parpool('local',4);
 
 [~,~,~,~,~,~,~] = max_Lg_r(filename,maxIters,rho0,stepVec);
 
