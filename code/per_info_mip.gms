@@ -164,6 +164,7 @@ Model UC /all/ ;
 * 0.5% optimality gap and 1 hr time limit
 UC.optcr = 0.005 ;
 UC.reslim = 3600 ;
+UC.threads = 4 ;
 
 * remove according to Steve because upper bound of 0 is stored
 *g.up(i,t,k)$(ord(k) gt numPts(i)) = 0 ;
