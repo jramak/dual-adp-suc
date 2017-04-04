@@ -4,7 +4,10 @@ irgdx(filename);
 Lu = Lu;
 numGens = length(Lu) - 2; % number of generators not including buy/sell
 
+scenario_times = nan(num_scenarios,1);
+ttot = tic;
 parfor i = 1:num_scenarios
+  tind = tic;
   [status,result]=system(['gams per_info_mip_single --probdata=',...
                           filename,' --subprob=',num2str(numGens+2),...
                           ' --scenario=', num2str(i),...
@@ -16,6 +19,8 @@ parfor i = 1:num_scenarios
   assert(length(modelstatus) == 100);
   assert(all((abs(modelstatus - 8) <= 0.01) | (abs(modelstatus - 1) <= 0.01)));
   assert(all(optcr <= 0.1));
+  scenario_times(i) = toc(tind);
 end
+tot_time = toc(ttot);
 
-
+save(['per_info_times_',filename]);
