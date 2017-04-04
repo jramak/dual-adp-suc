@@ -26,7 +26,11 @@ do
 	cp ~/jim_master_code/code/Lg_condor.run .
 	cp ~/jim_master_code/code/condor_gams_8CPU_4MEM_12DISK .
 
-        echo "lb_main('${file%%.*}',250,50/${i},(0.99).^(0:249))" > script.m
+        # 15 gen has maxDemand = 4660
+        # 30 gen has maxDemand = 6286.2
+        # 50 gen has maxDemand = 10184.4
+        # Use rho = 50 / (0.4 * maxDemand)
+        echo "lb_main('${file%%.*}',250,50/(${i}*0.1*4660),(0.99).^(0:249))" > script.m
 #        echo "lb_main('${file%%.*}',1,50/${i},(0.99).^(0))" > script.m
         export REQUEST_CPUS=4
  
