@@ -5,7 +5,7 @@ function [best_cost,best_idx,opt_cost_vec,time,tot_time,L_g_cost,...
 irgdx(filename);
 
 % need to assign data for the sake of the parfor loop
-numPts = numPts; 
+numPts = numPts;
 q = q;
 c = c;
 c_bar = c_bar;
@@ -66,7 +66,7 @@ grad = nan(size(lambda)); % stochastic subgradient
 % keep track of best cost information when optimizating Lagrangian
 best_idx = 1;
 best_cost = -inf;
-best_lambda = nan(size(lambda)); 
+best_lambda = nan(size(lambda));
 opt_cost_vec = nan(maxIters,1);
 best_L_g_cost = nan(numGens+2,1);
 best_grad = nan(size(lambda));
@@ -114,7 +114,7 @@ for k = 1:maxIters
         quadPts);
     time(numGens+1) = toc(tind);
 
-    tind = tic; 
+    tind = tic;
     % for sell generator
     [L_g_cost(numGens+2),z_sol_avg(:,:,numGens+2),V(2,:,:),uGen(2,:,:)]...
         = Lg_d(q(numGens+2,1:numPts(numGens+2))',...
@@ -122,27 +122,27 @@ for k = 1:maxIters
         h_bar(numGens+2),Lu(numGens+2),Ld(numGens+2),p_s,-lambda,T,...
         quadPts);
     z_sol_avg(:,:,numGens+2) = -1*z_sol_avg(:,:,numGens+2);
-    time(numGens+2) = toc(tind); 
-    
+    time(numGens+2) = toc(tind);
+
     opt_cost_vec(k) = sum(L_g_cost) + sum((lambda.*x_s)*p_s);
-    
+
     if (opt_cost_vec(k) > best_cost)
         best_cost = opt_cost_vec(k);
         best_idx = k;
-        best_lambda = lambda; 
+        best_lambda = lambda;
         best_V1 = V1;
         best_uGen1 = uGen1;
         best_V2 = V2;
         best_uGen2 = uGen2;
-        best_V = V; 
+        best_V = V;
         best_uGen = uGen;
         best_L_g_cost = L_g_cost;
         best_grad = grad;
     end
-    
+
     grad = x_s - sum(z_sol_avg,3);
     lambda = lambda + stepVec(k).*rho0.*grad;
-    
+
 %     % some other possible choices for subgradient step
 %     lambda = lambda + alpha^k.*rho0.*grad;
 %     lambda = lambda + (1/k).*rho0.*grad;
