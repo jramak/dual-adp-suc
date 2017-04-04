@@ -4,7 +4,7 @@ Sets
          t       time periods            / 1 * 168 /
          k       max num piecewise pts for buy sell gen  / 1 * 22 /
 *         kk      max piecewise pts for fut reg gen       / 1 * 100 /
-         s       sample paths            / 1 * 1 /
+         s       sample paths            / 1 * 100 /
          ;
 
 Scalar
@@ -164,61 +164,62 @@ Model UC /all/ ;
 * 0.5% optimality gap and 1 hr time limit
 UC.optcr = 0.005 ;
 UC.reslim = 3600 ;
-UC.threads = 4 ;
+UC.threads = 1 ;
 
 * remove according to Steve because upper bound of 0 is stored
 *g.up(i,t,k)$(ord(k) gt numPts(i)) = 0 ;
 
-Parameter cost_gen(i,s) cost incurred for each generator for each sample path ;
+Parameter cost_gen(i) cost incurred for each generator for each sample path ;
 
-Parameter cost_tot(s) cost incurred for each sample path ;
+Parameter cost_tot cost incurred for each sample path ;
 
-Parameter objEst_lb(s), objVal_ub(s) ;
+Parameter objEst_lb, objVal_ub ;
 
 Parameter time keep track of total time ;
 
-Parameter time_s(s) keep track of total time per sample path ;
+*Parameter time_s(s) keep track of total time per sample path ;
 
-Parameters optca(s), optcr(s), modelstatus(s) ;
+Parameters optca, optcr, modelstatus ;
 
-Parameters       u_s(i,t,s)
-                 v_s(i,t,s)
-                 y_s(i,t,s)
-                 z_s(i,t,s)
-                 g_s(i,t,k,s)
-                 zc_s(s)
+Parameters       u_s(i,t)
+                 v_s(i,t)
+                 y_s(i,t)
+                 z_s(i,t)
+                 g_s(i,t,k)
+                 zc_s
                  ;
 
 time = timeelapsed ;
-loop(s,
-         d(t) = D_s_lb(t,s) ;
 
-         time_s(s) = timeelapsed ;
+*start solve
+d(t) = D_s_lb(t,'%s%') ;
 
-         Solve UC using mip minimizing zc ;
+*time_s(s) = timeelapsed ;
 
-         time_s(s) = timeelapsed - time_s(s) ;
+Solve UC using mip minimizing zc ;
 
-         cost_gen(i,s) = sum(t,y.l(i,t)+c_bar(i)*u.l(i,t)+h_bar(i)*v.l(i,t));
+*time_s(s) = timeelapsed - time_s(s) ;
 
-         u_s(i,t,s) = u.l(i,t) ;
-         v_s(i,t,s) = v.l(i,t) ;
-         y_s(i,t,s) = y.l(i,t) ;
-         z_s(i,t,s) = z.l(i,t) ;
-         g_s(i,t,k,s) = g.l(i,t,k) ;
-         zc_s(s) = zc.l ;
+cost_gen(i) = sum(t,y.l(i,t)+c_bar(i)*u.l(i,t)+h_bar(i)*v.l(i,t));
 
-         objEst_lb(s) = UC.objest ;
-         objVal_ub(s) = UC.objval ;
+u_s(i,t) = u.l(i,t) ;
+v_s(i,t) = v.l(i,t) ;
+y_s(i,t) = y.l(i,t) ;
+z_s(i,t) = z.l(i,t) ;
+g_s(i,t,k) = g.l(i,t,k) ;
+zc_s = zc.l ;
 
-         optca(s) = abs(UC.objest - UC.objval) ;
-         optcr(s) = optca(s) / max(abs(UC.objest),abs(UC.objval)) ;
-         modelstatus(s) = UC.Modelstat ;
-);
+objEst_lb = UC.objest ;
+objVal_ub = UC.objval ;
+
+optca = abs(UC.objest - UC.objval) ;
+optcr = optca / max(abs(UC.objest),abs(UC.objval)) ;
+modelstatus = UC.Modelstat ;
+
 time = timeelapsed - time ;
 
-cost_tot(s) = sum(i,cost_gen(i,s)) ;
+cost_tot = sum(i,cost_gen(i)) ;
 
 execute_unloadIdx 'lb_per_info_%s%.gdx', objEst_lb, objVal_ub, cost_tot,
-cost_gen, time, time_s, optca, optcr, modelstatus, u_s, v_s, y_s, z_s,
+cost_gen, time, optca, optcr, modelstatus, u_s, v_s, y_s, z_s,
 g_s, zc_s ;
