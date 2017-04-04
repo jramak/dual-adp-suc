@@ -192,7 +192,7 @@ Parameters       u_s(i,t)
 time = timeelapsed ;
 
 *start solve
-d(t) = D_s_lb(t,'%s%') ;
+d(t) = D_s_lb(t,'%scenario%') ;
 
 *time_s(s) = timeelapsed ;
 
@@ -220,6 +220,6 @@ time = timeelapsed - time ;
 
 cost_tot = sum(i,cost_gen(i)) ;
 
-execute_unloadIdx 'lb_per_info_%s%.gdx', objEst_lb, objVal_ub, cost_tot,
+execute_unloadIdx 'lb_per_info_%scenario%.gdx', objEst_lb, objVal_ub, cost_tot,
 cost_gen, time, optca, optcr, modelstatus, u_s, v_s, y_s, z_s,
 g_s, zc_s ;
