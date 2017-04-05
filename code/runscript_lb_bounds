@@ -6,10 +6,10 @@ for i in {4..8..2}
 do
 for j in {15..25..5}
 do
-	file=uc30_${i}md_${j}sig.gdx
+	file=uc15_${i}md_${j}sig.gdx
 	mkdir lb_${file%%.*}
 	cd lb_${file%%.*}
-	cp ~/jim_master_code/data/gen30/$file .
+	cp ~/jim_master_code/data/gen15/$file .
 	cp ~/jim_master_code/code/lb_main.m .
 	cp ~/jim_master_code/code/per_info_mip_single.gms .
 	cp ~/jim_master_code/code/run_per_info_mip.m .
