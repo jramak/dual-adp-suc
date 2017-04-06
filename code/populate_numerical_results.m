@@ -67,10 +67,10 @@ for idx_i = 1:num
   lin_idx = 3 * (m_idx - 1) + sig_idx;
   lb_bounds_30(lin_idx, 1) = m_v * 0.1;
   lb_bounds_30(lin_idx, 2) = sig_v * 0.01;
-  lb_bounds_30(lin_idx, 3) = 15;
+  lb_bounds_30(lin_idx, 3) = 30;
   solve_times_30(lin_idx, 1) = m_v * 0.1;
   solve_times_30(lin_idx, 2) = sig_v * 0.01;
-  solve_times_30(lin_idx, 3) = 15;
+  solve_times_30(lin_idx, 3) = 30;
 
   load_tmp = dir('max_Lg_r_uc*.mat');
   if ~(length(load_tmp) == 0)
@@ -117,10 +117,10 @@ for idx_i = 1:num
   lin_idx = 3 * (m_idx - 1) + sig_idx;
   lb_bounds_50(lin_idx, 1) = m_v * 0.1;
   lb_bounds_50(lin_idx, 2) = sig_v * 0.01;
-  lb_bounds_50(lin_idx, 3) = 15;
+  lb_bounds_50(lin_idx, 3) = 50;
   solve_times_50(lin_idx, 1) = m_v * 0.1;
   solve_times_50(lin_idx, 2) = sig_v * 0.01;
-  solve_times_50(lin_idx, 3) = 15;
+  solve_times_50(lin_idx, 3) = 50;
 
   load_tmp = dir('max_Lg_r_uc*.mat');
   if ~(length(load_tmp) == 0)
@@ -150,3 +150,6 @@ for idx_i = 1:num
   cd ..
   cd ..
 end
+
+lb_bounds = [lb_bounds_15; lb_bounds_30; lb_bounds_50]
+solve_times = [solve_times_15; solve_times_30; solve_times_50]

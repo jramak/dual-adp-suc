@@ -168,6 +168,7 @@ Model UC /all/ ;
 *UC.optcr = 0 ;
 * 0.5% optimality gap
 UC.optcr = 0.005 ; 
+UC.threads = 4 ;
 
 time = timeelapsed ;
 
