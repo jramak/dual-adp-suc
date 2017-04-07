@@ -56,8 +56,9 @@ for idx_i = 1:num
   if ~(length(load_tmp) == 0)
     assert(length(load_tmp) == 1);
     load(load_tmp.name);
-    lb_bounds_15(lin_idx, 8) = mean(ub_cost) / 1e6;
-    lb_bounds_15(lin_idx, 9) = 1.96 * std(ub_cost) / (1e6 * sqrt(length(ub_cost)));
+    ub_bounds = sum(ub_cost);
+    lb_bounds_15(lin_idx, 8) = mean(ub_bounds) / 1e6;
+    lb_bounds_15(lin_idx, 9) = 1.96 * std(ub_bounds) / (1e6 * sqrt(length(ub_bounds)));
   end
   cd ..
   cd ..
@@ -120,8 +121,9 @@ for idx_i = 1:num
   if ~(length(load_tmp) == 0)
     assert(length(load_tmp) == 1);
     load(load_tmp.name);
-    lb_bounds_30(lin_idx, 8) = mean(ub_cost) / 1e6;
-    lb_bounds_30(lin_idx, 9) = 1.96 * std(ub_cost) / (1e6 * sqrt(length(ub_cost)));
+    ub_bounds = sum(ub_cost);
+    lb_bounds_30(lin_idx, 8) = mean(ub_bounds) / 1e6;
+    lb_bounds_30(lin_idx, 9) = 1.96 * std(ub_bounds) / (1e6 * sqrt(length(ub_bounds)));
   end
   cd ..
   cd ..
@@ -184,8 +186,9 @@ for idx_i = 1:num
   if ~(length(load_tmp) == 0)
     assert(length(load_tmp) == 1);
     load(load_tmp.name);
-    lb_bounds_50(lin_idx, 8) = mean(ub_cost) / 1e6;
-    lb_bounds_50(lin_idx, 9) = 1.96 * std(ub_cost) / (1e6 * sqrt(length(ub_cost)));
+    ub_bounds = sum(ub_cost);
+    lb_bounds_50(lin_idx, 8) = mean(ub_bounds) / 1e6;
+    lb_bounds_50(lin_idx, 9) = 1.96 * std(ub_bounds) / (1e6 * sqrt(length(ub_bounds)));
   end
   cd ..
   cd ..
