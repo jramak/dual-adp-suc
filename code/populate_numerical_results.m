@@ -197,3 +197,9 @@ end
 
 lb_bounds = [lb_bounds_15; lb_bounds_30; lb_bounds_50]
 solve_times = [solve_times_15; solve_times_30; solve_times_50]
+
+input.data = lb_bounds;
+input.dataFormat = {'%.1f',1,'%.2f',1,'%.0f',1,'%.2f',6};
+input.tableColLabels = {'c','sig','# Gen','Lg','Lg_d','mu_PInfo','HW_PInfo','mean','HW'};
+input.dataNanString = '-';
+latex = latexTable(input);
