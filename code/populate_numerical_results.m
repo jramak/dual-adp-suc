@@ -3,7 +3,6 @@ mat_res = dir('./gen15/lb_bounds_final/lb_*');
 num = length(mat_res);
 m = [4, 6, 8];
 sig = [15, 20, 25];
-n = 100; % number of scenarios
 
 lb_bounds_15 = nan(num, 7);
 solve_times_15 = nan(num, 6);
@@ -43,7 +42,7 @@ for idx_i = 1:num
     assert(length(load_tmp) == 1);
     load(load_tmp.name);
     lb_bounds_15(lin_idx, 6) = mean(obj_lb) / 1e6;
-    lb_bounds_15(lin_idx, 7) = 1.96 * std(obj_lb) / (1e6 * sqrt(n));
+    lb_bounds_15(lin_idx, 7) = 1.96 * std(obj_lb) / (1e6 * sqrt(length(obj_lb)));
     solve_times_15(lin_idx, 6) = tot_time / 60;
   end
   cd ..
@@ -93,7 +92,7 @@ for idx_i = 1:num
     assert(length(load_tmp) == 1);
     load(load_tmp.name);
     lb_bounds_30(lin_idx, 6) = mean(obj_lb) / 1e6;
-    lb_bounds_30(lin_idx, 7) = 1.96 * std(obj_lb) / (1e6 * sqrt(n));
+    lb_bounds_30(lin_idx, 7) = 1.96 * std(obj_lb) / (1e6 * sqrt(length(obj_lb)));
     solve_times_30(lin_idx, 6) = tot_time / 60;
   end
   cd ..
@@ -143,7 +142,7 @@ for idx_i = 1:num
     assert(length(load_tmp) == 1);
     load(load_tmp.name);
     lb_bounds_50(lin_idx, 6) = mean(obj_lb) / 1e6;
-    lb_bounds_50(lin_idx, 7) = 1.96 * std(obj_lb) / (1e6 * sqrt(n));
+    lb_bounds_50(lin_idx, 7) = 1.96 * std(obj_lb) / (1e6 * sqrt(length(obj_lb)));
     solve_times_50(lin_idx, 6) = tot_time / 60;
   end
   cd ..
