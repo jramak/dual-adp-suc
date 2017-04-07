@@ -69,7 +69,7 @@ end
 mat_res = dir('./gen30/lb_bounds_final/lb_*');
 num = length(mat_res);
 
-lb_bounds_30 = nan(num, 7);
+lb_bounds_30 = nan(num, 9);
 solve_times_30 = nan(num, 6);
 for idx_i = 1:num
   filename = mat_res(idx_i).name;
@@ -134,7 +134,7 @@ end
 mat_res = dir('./gen50/lb_bounds_final/lb_*');
 num = length(mat_res);
 
-lb_bounds_50 = nan(num, 7);
+lb_bounds_50 = nan(num, 9);
 solve_times_50 = nan(num, 6);
 for idx_i = 1:num
   filename = mat_res(idx_i).name;
