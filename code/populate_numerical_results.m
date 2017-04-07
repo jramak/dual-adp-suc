@@ -4,7 +4,7 @@ num = length(mat_res);
 m = [4, 6, 8];
 sig = [15, 20, 25];
 
-lb_bounds_15 = nan(num, 7);
+lb_bounds_15 = nan(num, 9);
 solve_times_15 = nan(num, 6);
 for idx_i = 1:num
   filename = mat_res(idx_i).name;
