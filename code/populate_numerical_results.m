@@ -48,6 +48,20 @@ for idx_i = 1:num
   cd ..
   cd ..
   cd ..
+
+  ub_filename = ['ub_fv_mip_uc15_', num2str(m_v), 'md_', num2str(sig_v), 'sig']
+  cd(['gen15/ub_mip_final/',ub_filename]);
+
+  load_tmp = dir('ub_fv_*.mat');
+  if ~(length(load_tmp) == 0)
+    assert(length(load_tmp) == 1);
+    load(load_tmp.name);
+    lb_bounds_15(lin_idx, 8) = mean(ub_cost) / 1e6;
+    lb_bounds_15(lin_idx, 9) = 1.96 * std(ub_cost) / (1e6 * sqrt(length(ub_cost)));
+  end
+  cd ..
+  cd ..
+  cd ..
 end
 
 % 30 gen problem
@@ -98,6 +112,20 @@ for idx_i = 1:num
   cd ..
   cd ..
   cd ..
+
+  ub_filename = ['ub_fv_mip_uc30_', num2str(m_v), 'md_', num2str(sig_v), 'sig']
+  cd(['gen30/ub_mip_final/',ub_filename]);
+
+  load_tmp = dir('ub_fv_*.mat');
+  if ~(length(load_tmp) == 0)
+    assert(length(load_tmp) == 1);
+    load(load_tmp.name);
+    lb_bounds_30(lin_idx, 8) = mean(ub_cost) / 1e6;
+    lb_bounds_30(lin_idx, 9) = 1.96 * std(ub_cost) / (1e6 * sqrt(length(ub_cost)));
+  end
+  cd ..
+  cd ..
+  cd ..
 end
 
 % 50 gen problem
@@ -144,6 +172,20 @@ for idx_i = 1:num
     lb_bounds_50(lin_idx, 6) = mean(obj_lb) / 1e6;
     lb_bounds_50(lin_idx, 7) = 1.96 * std(obj_lb) / (1e6 * sqrt(length(obj_lb)));
     solve_times_50(lin_idx, 6) = tot_time / 60;
+  end
+  cd ..
+  cd ..
+  cd ..
+
+  ub_filename = ['ub_fv_mip_uc50_', num2str(m_v), 'md_', num2str(sig_v), 'sig']
+  cd(['gen50/ub_mip_final/',ub_filename]);
+
+  load_tmp = dir('ub_fv_*.mat');
+  if ~(length(load_tmp) == 0)
+    assert(length(load_tmp) == 1);
+    load(load_tmp.name);
+    lb_bounds_50(lin_idx, 8) = mean(ub_cost) / 1e6;
+    lb_bounds_50(lin_idx, 9) = 1.96 * std(ub_cost) / (1e6 * sqrt(length(ub_cost)));
   end
   cd ..
   cd ..
