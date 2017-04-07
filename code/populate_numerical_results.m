@@ -49,7 +49,7 @@ for idx_i = 1:num
   cd ..
   cd ..
 
-  ub_filename = ['ub_fv_mip_uc15_', num2str(m_v), 'md_', num2str(sig_v), 'sig']
+  ub_filename = ['ub_fv_mip_uc15_', num2str(m_v), 'md_', num2str(sig_v), 'sig'];
   cd(['gen15/ub_mip_final/',ub_filename]);
 
   load_tmp = dir('ub_fv_*.mat');
@@ -114,7 +114,7 @@ for idx_i = 1:num
   cd ..
   cd ..
 
-  ub_filename = ['ub_fv_mip_uc30_', num2str(m_v), 'md_', num2str(sig_v), 'sig']
+  ub_filename = ['ub_fv_mip_uc30_', num2str(m_v), 'md_', num2str(sig_v), 'sig'];
   cd(['gen30/ub_mip_final/',ub_filename]);
 
   load_tmp = dir('ub_fv_*.mat');
@@ -179,7 +179,7 @@ for idx_i = 1:num
   cd ..
   cd ..
 
-  ub_filename = ['ub_fv_mip_uc50_', num2str(m_v), 'md_', num2str(sig_v), 'sig']
+  ub_filename = ['ub_fv_mip_uc50_', num2str(m_v), 'md_', num2str(sig_v), 'sig'];
   cd(['gen50/ub_mip_final/',ub_filename]);
 
   load_tmp = dir('ub_fv_*.mat');
