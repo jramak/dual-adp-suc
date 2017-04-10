@@ -203,3 +203,9 @@ input.dataFormat = {'%.1f',1,'%.2f',1,'%.0f',1,'%.2f',6};
 input.tableColLabels = {'c','sig','# Gen','Lg','Lg_d','mu_PInfo','HW_PInfo','mean','HW'};
 input.dataNanString = '-';
 latex = latexTable(input);
+
+input.data = solve_times;
+input.dataFormat = {'%.1f',1,'%.2f',1,'%.0f',1,'%.1f',3};
+input.tableColLabels = {'c','sig','# Gen','Lg','Lg_d','PInfo'};
+input.dataNanString = '-';
+latex = latexTable(input);
