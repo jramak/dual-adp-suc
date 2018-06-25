@@ -3,9 +3,9 @@ Authors: Jagdish Ramakrishnan, James Luedtke
 
 This repo contains the code and data for the paper: http://www.optimization-online.org/DB_HTML/2018/06/6672.html . The code is written in Matlab and optimization problems are solved using CPLEX 12.6 through the GAMS modeling language.
 
-## Generator data instances
+## Data instances
 
-The data is stored in the .gdx file format for ease loading into GAMS. The files can be found in the /data generator directories. The instances have the form
+The generator data instances are stored in the .gdx file format for ease loading into GAMS. The files can be found in the /data generator directories. The instances have the form
 
 uc{1}\_{2}md\_{3}sig.gdx,
 
