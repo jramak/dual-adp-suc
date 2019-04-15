@@ -3,64 +3,87 @@ maxDemand = maxDemand * maxDemand_mult
 
 numOffers = 10;
 numGens = 15;
+maxGens = 1011;
+
+s7.name = 'xmax';
+s7.form = 'full';
+r_struct = rgdx('uc_all',s7);
+r_qmax = r_struct.val;
+qmax = r_qmax((numOffers+1):(numOffers+maxGens));
 
 s1.name = 'GenOfferPrice';
 s1.form = 'full';
 r_struct = rgdx('uc_all',s1);
 r_price = r_struct.val;
-price = r_price((numOffers+1):(numOffers+numGens),1:numOffers);
+price = r_price((numOffers+1):(numOffers+maxGens),1:numOffers);
+
+flag_price_nonzero = ~all(price == 0, 2);
+
+% randomly select 1 peak generator, 2 mid range generators, 12 base generators
+idx = find(qmax > 800 & flag_price_nonzero);
+s_idx1 = datasample(RandStream('mt19937ar','Seed',1),idx,1,'Replace',false);
+idx = find(qmax > 200 & qmax <= 800 & flag_price_nonzero);
+s_idx2 = datasample(RandStream('mt19937ar','Seed',2),idx,2,'Replace',false);
+idx = find(qmax <= 200 & flag_price_nonzero);
+s_idx3 = datasample(RandStream('mt19937ar','Seed',3),idx,12,'Replace',false);
+
+s1.name = 'GenOfferPrice';
+s1.form = 'full';
+r_struct = rgdx('uc_all',s1);
+r_price = r_struct.val;
+price = r_price((numOffers+[s_idx1; s_idx2; s_idx3])',1:numOffers);
 
 s2.name = 'GenOfferQty';
 s2.form = 'full';
 r_struct = rgdx('uc_all',s2);
 r_qty = r_struct.val;
-qty = r_qty((numOffers+1):(numOffers+numGens),1:numOffers);
+qty = r_qty((numOffers+[s_idx1; s_idx2; s_idx3])',1:numOffers);
 
 s3.name = 'ColdStartCost';
 s3.form = 'full';
 r_struct = rgdx('uc_all',s3);
 r_h_bar = r_struct.val;
 % added spot buying and selling unit with 0 startup cost
-h_bar = [r_h_bar((numOffers+1):(numOffers+numGens));0;0];
+h_bar = [r_h_bar((numOffers+[s_idx1; s_idx2; s_idx3])');0;0];
 
 s4.name = 'NoLoadCost';
 s4.form = 'full';
 r_struct = rgdx('uc_all',s4);
 r_c_bar = r_struct.val;
 % added spot buying and selling unit with 0 transaction cost
-c_bar = [r_c_bar((numOffers+1):(numOffers+numGens));0;0];
+c_bar = [r_c_bar((numOffers+[s_idx1; s_idx2; s_idx3])');0;0];
 
 s5.name = 'MinDownTime';
 s5.form = 'full';
 r_struct = rgdx('uc_all',s5);
 r_minDownTime = r_struct.val;
 % added min down time of 1 for both buying and selling units
-Ld = [r_minDownTime((numOffers+1):(numOffers+numGens));1;1];
+Ld = [r_minDownTime((numOffers+[s_idx1; s_idx2; s_idx3])');1;1];
 
 s6.name = 'MinUpTime';
 s6.form = 'full';
 r_struct = rgdx('uc_all',s6);
 r_minUpTime = r_struct.val;
 % added min up time of 1 for both buying and selling units
-Lu = [r_minUpTime((numOffers+1):(numOffers+numGens));1;1];
+Lu = [r_minUpTime((numOffers+[s_idx1; s_idx2; s_idx3])');1;1];
 
 s7.name = 'xmax';
 s7.form = 'full';
 r_struct = rgdx('uc_all',s7);
 r_qmax = r_struct.val;
-qmax = r_qmax((numOffers+1):(numOffers+numGens));
+qmax = r_qmax((numOffers+[s_idx1; s_idx2; s_idx3])');
 
 s8.name = 'xmin';
 s8.form = 'full';
 r_struct = rgdx('uc_all',s8);
 r_qmin = r_struct.val;
-qmin = r_qmin((numOffers+1):(numOffers+numGens));
+qmin = r_qmin((numOffers+[s_idx1; s_idx2; s_idx3])');
 
 T = 168;
 % d = 2000*ones(T,1);
 % maxDemand = 2000;
 % percent_sig = 0.15;
-sigma = maxDemand*percent_sig; 
+sigma = maxDemand*percent_sig;
 quadPts = 10;
 [x,c] = lgwt(quadPts,maxDemand-4*sigma,maxDemand+4*sigma);
 
@@ -139,12 +162,18 @@ for i = 1:numGens
     q(i,1) = qmin(i);
     numPts(i) = numPtsT(i) - tmp_idx + 2;
 end
+
+% ensure max generation is captured in PWL points
+for i = 1:numGens
+    qmax(i) = min(q(i, numPts(i)), qmax(i))
+end
+
 % spot market buying unit:
-% q(numGens+1,1) = 0; c(numGens+1,1) = 0; 
+% q(numGens+1,1) = 0; c(numGens+1,1) = 0;
 % q(numGens+1,2) = 500; c(numGens+1,2) = 50000; % $100 slope per MW
 % q(numGens+1,3) = maxDemand; c(numGens+1,3) = 50000+(maxDemand-500)*200; % $200 slope per MW
 % numPts(numGens+1) = 3;
-q(numGens+1,1) = 0; c(numGens+1,1) = 0; 
+q(numGens+1,1) = 0; c(numGens+1,1) = 0;
 q(numGens+1,2) = 100; c(numGens+1,2) = 20000; % $200 slope per MW
 q(numGens+1,3) = maxDemand+4*sigma; c(numGens+1,3) = 20000+(maxDemand+4*sigma-100)*850; % $850 slope per MW
 numPts(numGens+1) = 3;
@@ -174,7 +203,7 @@ s9.form = 'full';
 r_struct = rgdx('uc_all',s9);
 r_RampDownRate = r_struct.val;
 % added min down time of 1 for both buying and selling units
-Rd = [60.*r_RampDownRate((numOffers+1):(numOffers+numGens));...
+Rd = [60.*r_RampDownRate((numOffers+[s_idx1; s_idx2; s_idx3])');...
     60*maxDemand;60*sum(qmax)];
 
 s10.name = 'RampUpRate';
@@ -182,7 +211,7 @@ s10.form = 'full';
 r_struct = rgdx('uc_all',s10);
 r_RampUpRate = r_struct.val;
 % added min up time of 1 for both buying and selling units
-Ru = [60.*r_RampUpRate((numOffers+1):(numOffers+numGens));...
+Ru = [60.*r_RampUpRate((numOffers+[s_idx1; s_idx2; s_idx3])');...
     60*maxDemand;60*sum(qmax)];
 
 % % plotting piecewise linear functions for each generator
@@ -193,11 +222,11 @@ Ru = [60.*r_RampUpRate((numOffers+1):(numOffers+numGens));...
 
 % q(gen#,demand pts), c(gen#,cost pts)
 % z_inc = nan(size(q_min));
-nPts = 50; 
+nPts = 50;
 Pow = nan(nPts,length(q_min));
 Feval = nan(nPts,length(q_min));
 for i = 1:(numGens+2)
-   [Pow(:,i),Feval(:,i)] = eval_pwl(q(i,1:numPts(i))',c(i,1:numPts(i))',q_min(i),q_max(i),nPts); 
+   [Pow(:,i),Feval(:,i)] = eval_pwl(q(i,1:numPts(i))',c(i,1:numPts(i))',q_min(i),q_max(i),nPts);
 %     z_inc(i) = Pow(2,i) - Pow(1,i);
 end
 
@@ -216,7 +245,7 @@ qn(:,1) = q(:,1);
 cn(:,1) = c(:,1);
 numPts_n = 1.*ones(length(q_min),1); % initialize
 delta_y = Feval(2,:) - Feval(1,:);
-myeps = 0.00001; 
+myeps = 0.00001;
 for i = 1:numGens
     for j = 3:nPts
         if ~(abs(Feval(j,i) - Feval(j-1,i) - delta_y(i)) <= myeps)
@@ -224,7 +253,7 @@ for i = 1:numGens
             numPts_n(i) = numPts_n(i) + 1;
             qn(i,numPts_n(i)) = Pow(j-1,i);
             cn(i,numPts_n(i)) = Feval(j-1,i);
-            delta_y(i) = Feval(j,i) - Feval(j-1,i);            
+            delta_y(i) = Feval(j,i) - Feval(j-1,i);
         end
     end
     numPts_n(i) = numPts_n(i) + 1;
