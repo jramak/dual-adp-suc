@@ -165,7 +165,14 @@ end
 
 % ensure max generation is captured in PWL points
 for i = 1:numGens
-    qmax(i) = min(q(i, numPts(i)), qmax(i))
+    qmax(i) = min(q(i, numPts(i)), qmax(i));
+    % get rid of repeated points
+    for j = 1:numPts(i)
+        if (qmax(i) == q(i,j))
+            numPts(i) = j;
+            break;
+        end
+    end
 end
 
 % spot market buying unit:
