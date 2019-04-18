@@ -19,13 +19,13 @@ price = r_price((numOffers+1):(numOffers+maxGens),1:numOffers);
 
 flag_price_nonzero = ~all(price == 0, 2);
 
-% randomly select 1 peak generator, 2 mid range generators, 12 base generators
+% randomly select 2 peak generator, 5 mid range generators, 23 base generators
 idx = find(qmax > 800 & flag_price_nonzero);
-s_idx1 = datasample(RandStream('mt19937ar','Seed',1),idx,1,'Replace',false);
+s_idx1 = datasample(RandStream('mt19937ar','Seed',4),idx,2,'Replace',false);
 idx = find(qmax > 200 & qmax <= 800 & flag_price_nonzero);
-s_idx2 = datasample(RandStream('mt19937ar','Seed',2),idx,2,'Replace',false);
+s_idx2 = datasample(RandStream('mt19937ar','Seed',5),idx,5,'Replace',false);
 idx = find(qmax <= 200 & flag_price_nonzero);
-s_idx3 = datasample(RandStream('mt19937ar','Seed',3),idx,12,'Replace',false);
+s_idx3 = datasample(RandStream('mt19937ar','Seed',6),idx,23,'Replace',false);
 
 s1.name = 'GenOfferPrice';
 s1.form = 'full';
