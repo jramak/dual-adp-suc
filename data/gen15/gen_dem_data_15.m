@@ -17,14 +17,26 @@ r_struct = rgdx('uc_all',s1);
 r_price = r_struct.val;
 price = r_price((numOffers+1):(numOffers+maxGens),1:numOffers);
 
-flag_price_nonzero = ~all(price == 0, 2);
+s7.name = 'xmax';
+s7.form = 'full';
+r_struct = rgdx('uc_all',s7);
+r_qmax = r_struct.val;
+qmax = r_qmax((numOffers+[s_idx1; s_idx2; s_idx3])');
+
+s8.name = 'xmin';
+s8.form = 'full';
+r_struct = rgdx('uc_all',s8);
+r_qmin = r_struct.val;
+qmin = r_qmin((numOffers+[s_idx1; s_idx2; s_idx3])');
+
+flag_price = ~all(price == 0, 2) & (qmax > qmin);
 
 % randomly select 1 peak generator, 2 mid range generators, 12 base generators
-idx = find(qmax > 800 & flag_price_nonzero);
+idx = find(qmax > 800 & flag_price);
 s_idx1 = datasample(RandStream('mt19937ar','Seed',1),idx,1,'Replace',false);
-idx = find(qmax > 200 & qmax <= 800 & flag_price_nonzero);
+idx = find(qmax > 200 & qmax <= 800 & flag_price);
 s_idx2 = datasample(RandStream('mt19937ar','Seed',2),idx,2,'Replace',false);
-idx = find(qmax <= 200 & flag_price_nonzero);
+idx = find(qmax <= 200 & flag_price);
 s_idx3 = datasample(RandStream('mt19937ar','Seed',3),idx,12,'Replace',false);
 
 s1.name = 'GenOfferPrice';
