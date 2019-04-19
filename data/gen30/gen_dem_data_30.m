@@ -11,23 +11,17 @@ r_struct = rgdx('uc_all',s7);
 r_qmax = r_struct.val;
 qmax = r_qmax((numOffers+1):(numOffers+maxGens));
 
+s8.name = 'xmin';
+s8.form = 'full';
+r_struct = rgdx('uc_all',s8);
+r_qmin = r_struct.val;
+qmin = r_qmin((numOffers+1):(numOffers+maxGens));
+
 s1.name = 'GenOfferPrice';
 s1.form = 'full';
 r_struct = rgdx('uc_all',s1);
 r_price = r_struct.val;
 price = r_price((numOffers+1):(numOffers+maxGens),1:numOffers);
-
-s7.name = 'xmax';
-s7.form = 'full';
-r_struct = rgdx('uc_all',s7);
-r_qmax = r_struct.val;
-qmax = r_qmax((numOffers+[s_idx1; s_idx2; s_idx3])');
-
-s8.name = 'xmin';
-s8.form = 'full';
-r_struct = rgdx('uc_all',s8);
-r_qmin = r_struct.val;
-qmin = r_qmin((numOffers+[s_idx1; s_idx2; s_idx3])');
 
 flag_price = ~all(price == 0, 2) & (qmax > qmin);
 
