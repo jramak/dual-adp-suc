@@ -31,12 +31,17 @@ qty = r_qty((numOffers+1):(numOffers+maxGens),1:numOffers);
 
 flag_price = (~all(price == 0, 2) & ~all(qty == 0, 2) & (qmax > qmin) & (sum(price == 0, 2) > 1) & (sum(qty == 0, 2) > 1));
 
+sum(flag_price)
+
 % randomly select 3 peak generator, 8 mid range generators, 39 base generators
 idx = find(qmax > 800 & flag_price);
+length(idx)
 s_idx1 = datasample(RandStream('mt19937ar','Seed',7),idx,3,'Replace',false);
 idx = find(qmax > 200 & qmax <= 800 & flag_price);
+length(idx)
 s_idx2 = datasample(RandStream('mt19937ar','Seed',8),idx,8,'Replace',false);
 idx = find(qmax <= 200 & flag_price);
+length(idx)
 s_idx3 = datasample(RandStream('mt19937ar','Seed',9),idx,39,'Replace',false);
 
 s1.name = 'GenOfferPrice';
