@@ -1,5 +1,5 @@
 function gen_dem_data_30(maxDemand_mult,maxDemand,percent_sig)
-maxDemand = maxDemand * maxDemand_mult
+maxDemand = maxDemand * maxDemand_mult;
 
 numOffers = 10;
 numGens = 30;
@@ -91,7 +91,7 @@ r_struct = rgdx('uc_all',s8);
 r_qmin = r_struct.val;
 qmin = r_qmin((numOffers+[s_idx1; s_idx2; s_idx3])');
 
-price(qty == 0) = 0
+price(qty == 0) = 0;
 
 T = 168;
 % d = 2000*ones(T,1);
