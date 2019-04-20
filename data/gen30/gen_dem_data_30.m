@@ -23,7 +23,13 @@ r_struct = rgdx('uc_all',s1);
 r_price = r_struct.val;
 price = r_price((numOffers+1):(numOffers+maxGens),1:numOffers);
 
-flag_price = ~all(price == 0, 2) & (qmax > qmin);
+s2.name = 'GenOfferQty';
+s2.form = 'full';
+r_struct = rgdx('uc_all',s2);
+r_qty = r_struct.val;
+qty = r_qty((numOffers+1):(numOffers+maxGens),1:numOffers);
+
+flag_price = ~all(price == 0, 2) & ~all(qty == 0, 2) & (qmax > qmin);
 
 % randomly select 2 peak generator, 5 mid range generators, 23 base generators
 idx = find(qmax > 800 & flag_price);
@@ -84,6 +90,8 @@ s8.form = 'full';
 r_struct = rgdx('uc_all',s8);
 r_qmin = r_struct.val;
 qmin = r_qmin((numOffers+[s_idx1; s_idx2; s_idx3])');
+
+price(qty == 0) = 0
 
 T = 168;
 % d = 2000*ones(T,1);
