@@ -29,7 +29,7 @@ r_struct = rgdx('uc_all',s2);
 r_qty = r_struct.val;
 qty = r_qty((numOffers+1):(numOffers+maxGens),1:numOffers);
 
-flag_price = ~all(price == 0, 2) & ~all(qty == 0, 2) & (qmax > qmin);
+flag_price = (~all(price == 0, 2) & ~all(qty == 0, 2) & (qmax > qmin) & (sum(price == 0, 2) > 1) & (sum(qty == 0, 2) > 1));
 
 % randomly select 3 peak generator, 8 mid range generators, 39 base generators
 idx = find(qmax > 800 & flag_price);
