@@ -43,9 +43,12 @@ r_minUpTime = r_struct.val;
 % added min up time of 1 for both buying and selling units
 Lu = r_minUpTime((numOffers+1):(numOffers+maxGens));
 
-flag_price = (~all(price == 0, 2) & ~all(qty == 0, 2) & ...
+isaninteger = @(x)isfinite(x) & x==floor(x);
+
+flag_price = ((~all(price == 0, 2)) & (~all(qty == 0, 2)) & ...
              (qmax > qmin) & (sum(price == 0, 2) > 1) & ...
-             (sum(qty == 0, 2) > 1)) & (Ld > 0) & (Lu > 0);
+             (sum(qty == 0, 2) > 1)) & (Ld > 0) & (Lu > 0) & ...
+             (isaninteger(Ld)) & (isaninteger(Lu)));
 
 sum(flag_price)
 
