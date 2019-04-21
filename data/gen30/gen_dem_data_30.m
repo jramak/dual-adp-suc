@@ -29,7 +29,23 @@ r_struct = rgdx('uc_all',s2);
 r_qty = r_struct.val;
 qty = r_qty((numOffers+1):(numOffers+maxGens),1:numOffers);
 
-flag_price = (~all(price == 0, 2) & ~all(qty == 0, 2) & (qmax > qmin) & (sum(price == 0, 2) > 1) & (sum(qty == 0, 2) > 1));
+s5.name = 'MinDownTime';
+s5.form = 'full';
+r_struct = rgdx('uc_all',s5);
+r_minDownTime = r_struct.val;
+% added min down time of 1 for both buying and selling units
+Ld = r_minDownTime((numOffers+1):(numOffers+maxGens));
+
+s6.name = 'MinUpTime';
+s6.form = 'full';
+r_struct = rgdx('uc_all',s6);
+r_minUpTime = r_struct.val;
+% added min up time of 1 for both buying and selling units
+Lu = r_minUpTime((numOffers+1):(numOffers+maxGens));
+
+flag_price = (~all(price == 0, 2) & ~all(qty == 0, 2) & ...
+             (qmax > qmin) & (sum(price == 0, 2) > 1) & ...
+             (sum(qty == 0, 2) > 1)) & (Ld > 0) & (Lu > 0);
 
 sum(flag_price)
 
