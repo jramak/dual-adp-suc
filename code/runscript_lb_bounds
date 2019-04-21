@@ -34,7 +34,7 @@ do
         # 30 gen has maxDemand = 6017.1
         # 50 gen has maxDemand = 9434.3
         # Use rho = 50 / (0.4 * maxDemand)
-        echo "lb_main('${file%%.*}',250,50/(${i}*0.1*4660),(0.99).^(0:249))" > script.m
+        echo "lb_main('${file%%.*}',250,50/(${i}*0.1*3479),(0.99).^(0:249))" > script.m
 #        echo "lb_main('${file%%.*}',1,50/${i},(0.99).^(0))" > script.m
         export REQUEST_CPUS=4
  
