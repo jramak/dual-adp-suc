@@ -9,26 +9,30 @@ do
 	file=uc15_${i}md_${j}sig.gdx
 	mkdir lb_${file%%.*}
 	cd lb_${file%%.*}
-	cp ~/jim_master_code/data/gen15/$file .
-	cp ~/jim_master_code/code/lb_main.m .
-	cp ~/jim_master_code/code/per_info_mip_single.gms .
-	cp ~/jim_master_code/code/run_per_info_mip.m .
-	cp ~/jim_master_code/code/max_Lg_r_d.m .
-	cp ~/jim_master_code/code/max_Lg_r.m .
-	cp ~/jim_master_code/code/Lg_r_d.m .
-	cp ~/jim_master_code/code/Lg_r.m .
-	cp ~/jim_master_code/code/Lg_d.m .
-	cp ~/jim_master_code/code/Lg.m .
-	cp ~/jim_master_code/code/eval_pwl.m .
-	cp ~/jim_master_code/code/lp_power.m .
-	cp ~/jim_master_code/code/gendist.m .
-	cp ~/jim_master_code/code/startup.m .
-	cp ~/jim_master_code/code/Lg_condor.run .
-	cp ~/jim_master_code/code/condor_gams_8CPU_4MEM_12DISK .
+	cp ~/dual-adp-suc/data/gen15/$file .
+	cp ~/dual-adp-suc/code/lb_main.m .
+	cp ~/dual-adp-suc/code/per_info_mip_single.gms .
+	cp ~/dual-adp-suc/code/run_per_info_mip.m .
+	cp ~/dual-adp-suc/code/max_Lg_r_d.m .
+	cp ~/dual-adp-suc/code/max_Lg_r.m .
+	cp ~/dual-adp-suc/code/Lg_r_d.m .
+	cp ~/dual-adp-suc/code/Lg_r.m .
+	cp ~/dual-adp-suc/code/Lg_d.m .
+	cp ~/dual-adp-suc/code/Lg.m .
+	cp ~/dual-adp-suc/code/eval_pwl.m .
+	cp ~/dual-adp-suc/code/lp_power.m .
+	cp ~/dual-adp-suc/code/gendist.m .
+	cp ~/dual-adp-suc/code/startup.m .
+	cp ~/dual-adp-suc/code/Lg_condor.run .
+	cp ~/dual-adp-suc/code/condor_gams_8CPU_4MEM_12DISK .
 
         # 15 gen has maxDemand = 4660
         # 30 gen has maxDemand = 6286.2
         # 50 gen has maxDemand = 10184.4
+        # it changed!! below are new maxDemands
+        # 15 gen has maxDemand = 3479
+        # 30 gen has maxDemand = 6017.1
+        # 50 gen has maxDemand = 9434.3
         # Use rho = 50 / (0.4 * maxDemand)
         echo "lb_main('${file%%.*}',250,50/(${i}*0.1*4660),(0.99).^(0:249))" > script.m
 #        echo "lb_main('${file%%.*}',1,50/${i},(0.99).^(0))" > script.m
