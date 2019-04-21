@@ -30,14 +30,14 @@ do
         # 30 gen has maxDemand = 6286.2
         # 50 gen has maxDemand = 10184.4
         # it changed!! below are new maxDemands
-        # 15 gen has maxDemand = 3479
-        # 30 gen has maxDemand = 6017.1
-        # 50 gen has maxDemand = 9434.3
+        # 15 gen has maxDemand = 3241.4
+        # 30 gen has maxDemand = 6029.4
+        # 50 gen has maxDemand = 9424.6
         # Use rho = 50 / (0.4 * maxDemand)
-        echo "lb_main('${file%%.*}',250,50/(${i}*0.1*3479),(0.99).^(0:249))" > script.m
+        echo "lb_main('${file%%.*}',250,50/(${i}*0.1*3241.4),(0.99).^(0:249))" > script.m
 #        echo "lb_main('${file%%.*}',1,50/${i},(0.99).^(0))" > script.m
         export REQUEST_CPUS=4
- 
+
 	./condor_gams_8CPU_4MEM_12DISK Lg_condor.run "script.m,lb_main.m,per_info_mip_single.gms,run_per_info_mip.m,max_Lg_r_d.m,max_Lg_r.m,Lg_r_d.m,Lg_r.m,Lg_d.m,Lg.m,eval_pwl.m,lp_power.m,gendist.m,startup.m,$file" &
 	cd ..
 done
