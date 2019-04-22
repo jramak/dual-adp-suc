@@ -1,4 +1,4 @@
-maxDemand = 6286.2
+maxDemand = 6783.8
 maxDemand_mult = [0.4, 0.6, 0.8];
 % maxDemand_vec = [3000];
 percent_sig = [0.15, 0.20, 0.25];
