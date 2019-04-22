@@ -2,6 +2,9 @@ function scaledDemand = read_PJM_xls(maxDemand)
 
 [NUMR,TXT,RAW] = xlsread('2013-day-ahead-demand-bid.xls','PJM');
 
+% only use summer months: June, July, August
+NUMR = NUMR(152:243, :);
+
 day_labelR = inf(length(NUMR),1);
 day_labelR(1:5) = 3:7; % data starts on a Tuesday!
 idx = 6:length(day_labelR);
