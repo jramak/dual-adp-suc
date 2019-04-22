@@ -30,11 +30,11 @@ do
         # 30 gen has maxDemand = 6286.2
         # 50 gen has maxDemand = 10184.4
         # it changed!! below are new maxDemands
-        # 15 gen has maxDemand = 3241.4
-        # 30 gen has maxDemand = 6029.4
-        # 50 gen has maxDemand = 9424.6
+        # 15 gen has maxDemand = 3421.5
+        # 30 gen has maxDemand = 6783.8
+        # 50 gen has maxDemand = 9870.5 
         # Use rho = 50 / (0.4 * maxDemand)
-        echo "lb_main('${file%%.*}',250,50/(${i}*0.1*3241.4),(0.99).^(0:249))" > script.m
+        echo "lb_main('${file%%.*}',250,50/(${i}*0.1*3421.5),(0.99).^(0:249))" > script.m
 #        echo "lb_main('${file%%.*}',1,50/${i},(0.99).^(0))" > script.m
         export REQUEST_CPUS=4
 
