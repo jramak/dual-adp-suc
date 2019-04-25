@@ -1,5 +1,5 @@
 % 15 gen problem
-mat_res = dir('./gen15/lb_bounds_final/lb_*');
+mat_res = dir('./gen15/lb_bounds/lb_*');
 num = length(mat_res);
 m = [4, 6, 8];
 sig = [15, 20, 25];
@@ -8,7 +8,7 @@ lb_bounds_15 = nan(num, 9);
 solve_times_15 = nan(num, 6);
 for idx_i = 1:num
   filename = mat_res(idx_i).name;
-  cd(['gen15/lb_bounds_final/',filename]);
+  cd(['gen15/lb_bounds/',filename]);
   m_v = str2num(filename(9));
   sig_v = str2num(filename(13:14));
   m_idx = find(m == m_v);
@@ -50,7 +50,7 @@ for idx_i = 1:num
   cd ..
 
   ub_filename = ['ub_fv_mip_uc15_', num2str(m_v), 'md_', num2str(sig_v), 'sig'];
-  cd(['gen15/ub_mip_final/',ub_filename]);
+  cd(['gen15/ub_bounds/',ub_filename]);
 
   load_tmp = dir('ub_fv_*.mat');
   if ~(length(load_tmp) == 0)
@@ -66,14 +66,14 @@ for idx_i = 1:num
 end
 
 % 30 gen problem
-mat_res = dir('./gen30/lb_bounds_final/lb_*');
+mat_res = dir('./gen30/lb_bounds/lb_*');
 num = length(mat_res);
 
 lb_bounds_30 = nan(num, 9);
 solve_times_30 = nan(num, 6);
 for idx_i = 1:num
   filename = mat_res(idx_i).name;
-  cd(['gen30/lb_bounds_final/',filename]);
+  cd(['gen30/lb_bounds/',filename]);
   m_v = str2num(filename(9));
   sig_v = str2num(filename(13:14));
   m_idx = find(m == m_v);
@@ -115,7 +115,7 @@ for idx_i = 1:num
   cd ..
 
   ub_filename = ['ub_fv_mip_uc30_', num2str(m_v), 'md_', num2str(sig_v), 'sig'];
-  cd(['gen30/ub_mip_final/',ub_filename]);
+  cd(['gen30/ub_bounds/',ub_filename]);
 
   load_tmp = dir('ub_fv_*.mat');
   if ~(length(load_tmp) == 0)
@@ -131,14 +131,14 @@ for idx_i = 1:num
 end
 
 % 50 gen problem
-mat_res = dir('./gen50/lb_bounds_final/lb_*');
+mat_res = dir('./gen50/lb_bounds/lb_*');
 num = length(mat_res);
 
 lb_bounds_50 = nan(num, 9);
 solve_times_50 = nan(num, 6);
 for idx_i = 1:num
   filename = mat_res(idx_i).name;
-  cd(['gen50/lb_bounds_final/',filename]);
+  cd(['gen50/lb_bounds/',filename]);
   m_v = str2num(filename(9));
   sig_v = str2num(filename(13:14));
   m_idx = find(m == m_v);
@@ -180,7 +180,7 @@ for idx_i = 1:num
   cd ..
 
   ub_filename = ['ub_fv_mip_uc50_', num2str(m_v), 'md_', num2str(sig_v), 'sig'];
-  cd(['gen50/ub_mip_final/',ub_filename]);
+  cd(['gen50/ub_bounds/',ub_filename]);
 
   load_tmp = dir('ub_fv_*.mat');
   if ~(length(load_tmp) == 0)
