@@ -2,7 +2,7 @@
 
 #files=uc15_1500md_15sig.gdx
 #for file in $files
-for i in {1500..4500..1000}
+for i in {4..8..2}
 do
 for j in {15..25..5}
 do
