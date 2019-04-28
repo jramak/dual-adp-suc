@@ -2,9 +2,9 @@
 
 #files=uc15_1500md_15sig.gdx
 #for file in $files
-for i in {4..4..2}
+for i in {4..8..2}
 do
-for j in {15..25..5}
+for j in {15..15..5}
 do
 	file=uc15_${i}md_${j}sig.gdx
 	mkdir ub_${file%%.*}
