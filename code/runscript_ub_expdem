@@ -9,9 +9,9 @@ do
 	file=uc15_${i}md_${j}sig.gdx
 	mkdir ub_${file%%.*}
 	cd ub_${file%%.*}
-	cp ~/jim_master_code/data/gen15/$file .
-	cp ~/jim_master_code/code/ub_expdem_mip.gms . 
-	cp ~/jim_master_code/code/condor_gams .
+	cp ~/dual-adp-suc/data/gen15/$file .
+	cp ~/dual-adp-suc/code/ub_expdem_mip.gms . 
+	cp ~/dual-adp-suc/code/condor_gams .
 
         echo "hostname" > ub_exp.run
         echo "echo 'pwd'" >> ub_exp.run
