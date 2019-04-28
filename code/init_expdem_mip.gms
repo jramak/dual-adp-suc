@@ -242,4 +242,4 @@ Solve UC using mip minimizing zc ;
 *time = timeelapsed - time ;
 
 *execute_unloadIdx 'ub_expdem_mip.gdx', cost_tot, cost_gen, time, time_s, optca, optcr, modelstatus, u_s, v_s, y_s, z_s, g_s, zc_s ;
-execute_unloadIdx 'ub_expdem_mip.gdx', time, optca, optcr, modelstatus, u, v, y, z, g, zc ;
+execute_unloadIdx 'init_expdem_mip.gdx', time, optca, optcr, modelstatus, u, v, y, z, g, zc ;
