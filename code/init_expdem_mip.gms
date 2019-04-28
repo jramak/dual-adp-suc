@@ -2,8 +2,9 @@ $GDXin %probdata%
 Sets
          i       generators              / 1 * %subprob% /
          t       time periods            / 1 * 168 /
-         k       max num piecewise pts for buy sell gen  / 1 * 11 /
-         s       sample paths            / 1 * 500 /
+         k       max num piecewise pts for buy sell gen  / 1 * 22 /
+*         kk      max piecewise pts for fut reg gen       / 1 * 100 /
+         s       sample paths            / 1 * 50 /
          ;
 
 Scalar
@@ -12,14 +13,17 @@ Scalar
 numGens = %subprob% - 2 ;
 
 alias(t,t1,t2) ;
+*alias(t,t2) ;
 
 Set      dynk(i,k) ;
 
 Parameter
-         numPts(i)     number of valid cost pts for each generator ;
-$load numPts
+         numPts_n(i)     number of valid cost pts for each generator ;
+$load numPts_n
 
-dynk(i,k) = YES$(ord(k) le numPts(i));
+dynk(i,k) = YES$(ord(k) le numPts_n(i));
+
+*display k ;
 
 Variables
          u(i,t)          equals 1 if generator i is on and 0 otherwise
@@ -34,21 +38,21 @@ Variables
 Binary Variables u, v ;
 Positive Variable y, z, g ;
 
-Parameter
-         q(i,k)        x coordinates quantity of piecewise function ;
-$load q
-
-Parameter
-         c(i,k)        y coordinates cost of piecewise function ;
-$load c
-
 *Parameter
-*         qn(i,k)        x coordinates quantity of piecewise function ;
-*$load qn
-
+*         q(i,k)        x coordinates quantity of piecewise function ;
+*$load q
+*
 *Parameter
-*         cn(i,k)        y coordinates cost of piecewise function ;
-*$load cn
+*         c(i,k)        y coordinates cost of piecewise function ;
+*$load c
+
+Parameter
+         qn(i,k)        x coordinates quantity of piecewise function ;
+$load qn
+
+Parameter
+         cn(i,k)        y coordinates cost of piecewise function ;
+$load cn
 
 Parameter
          c_bar(i)      minimum generator turn on cost ;
@@ -94,12 +98,12 @@ Parameter
          d(t)   demand over time t ;
 $load d
 
-Parameter d_save(t) copy of d(t) ;
-d_save(t) = d(t) ;
+*Parameter d_save(t) copy of d(t) ;
+*d_save(t) = d(t) ;
 
-Parameter
-         D_s_ub(t,s)   demand sample paths ;
-$load D_s_ub
+*Parameter
+*         D_s_ub(t,s)   demand sample paths ;
+*$load D_s_ub
 
 $GDXin
 
@@ -146,8 +150,8 @@ rampDownEq(i,t) .. z(i,t-1) - Rd(i) - (1-u(i,t))*q_min(i) =l= z(i,t);
 *PWLEq3(i,t)$(ord(i) le numGens) .. y(i,t) =e= sum(kk,Feval(kk,i)*g(i,t,kk));
 
 PWLEq1(i,t) .. sum(dynk(i,k),g(i,t,k)) =e= u(i,t);
-PWLEq2(i,t) .. z(i,t) =e= sum(dynk(i,k),q(i,k)*g(i,t,k));
-PWLEq3(i,t) .. y(i,t) =e= sum(dynk(i,k),c(i,k)*g(i,t,k));
+PWLEq2(i,t) .. z(i,t) =e= sum(dynk(i,k),qn(i,k)*g(i,t,k));
+PWLEq3(i,t) .. y(i,t) =e= sum(dynk(i,k),cn(i,k)*g(i,t,k));
 
 ** for buy generator
 *PWLEq1b(i,t)$(ord(i) eq (numGens+1)) .. sum(dynk(i,k),gb(i,t,k)) =e= u(i,t);
@@ -170,31 +174,31 @@ UC.reslim = 3600 ;
 * remove according to Steve because upper bound of 0 is stored
 *g.up(i,t,k)$(ord(k) gt numPts(i)) = 0 ;
 
-Parameter cost_gen(i,s) cost incurred for each generator for each sample path ;
+*Parameter cost_gen(i,s) cost incurred for each generator for each sample path ;
 
-Parameter cost_tot(s) cost incurred for each sample path ;
+*Parameter cost_tot(s) cost incurred for each sample path ;
 
-Parameter time_s(s) keep track of total time per sample path ;
-Parameter time_s_t(s,t) keep track of total time per sample path per time period;
+*Parameter time_s(s) keep track of total time per sample path ;
+*Parameter time_s_t(s,t) keep track of total time per sample path per time period;
 
-Parameters optca(t,s), optcr(t,s), modelstatus(t,s) ;
+*Parameters optca(t,s), optcr(t,s), modelstatus(t,s) ;
 
-Parameters       u_s(i,t,s)
-                 v_s(i,t,s)
-                 y_s(i,t,s)
-                 z_s(i,t,s)
-                 g_s(i,t,k,s)
-                 zc_s(s)
-                 tmp_idx(t2)
-                 tmp_cost(t2)
-                 tmp_slope(t2)
-                 tmp_z(t2)
-                 ;
+*Parameters       u_s(i,t,s)
+*                 v_s(i,t,s)
+*                 y_s(i,t,s)
+*                 z_s(i,t,s)
+*                 g_s(i,t,k,s)
+*                 zc_s(s)
+*                 tmp_idx(t2)
+*                 tmp_cost(t2)
+*                 tmp_slope(t2)
+*                 tmp_z(t2)
+*                 ;
 
 * force buy and sell generators to be turned on
 u.fx(i,t)$(ord(i) gt numGens) = 1 ;
 
-cost_gen(i,s) = 0;
+*cost_gen(i,s) = 0;
 
 time = timeelapsed ;
 
@@ -239,7 +243,34 @@ Solve UC using mip minimizing zc ;
 
 *cost_tot(s) = sum(i,cost_gen(i,s)) ;
 
-*time = timeelapsed - time ;
+time = timeelapsed - time ;
+
+scalars optca, optcr, modelstatus ;
+optca = abs(UC.objest - UC.objval) ;
+optcr = optca / max(abs(UC.objest),abs(UC.objval)) ;
+modelstatus = UC.Modelstat ;
+
+Parameter cost_gen(i) cost incurred for each generator ;
+
+Parameter cost_tot cost incurred over all generators ;
+
+cost_gen(i) = sum(t,y.l(i,t)+c_bar(i)*u.l(i,t)+h_bar(i)*v.l(i,t));
+cost_tot = sum(i,cost_gen(i)) ;
+
+Parameters       u_s(i,t)
+                 v_s(i,t)
+                 y_s(i,t)
+                 z_s(i,t)
+                 g_s(i,t,k)
+                 zc_s
+                 ;
+
+u_s(i,t) = u.l(i,t) ;
+v_s(i,t) = v.l(i,t) ;
+y_s(i,t) = y.l(i,t) ;
+z_s(i,t) = z.l(i,t) ;
+g_s(i,t,k) = g.l(i,t,k) ;
+zc_s = zc.l ;
 
 *execute_unloadIdx 'ub_expdem_mip.gdx', cost_tot, cost_gen, time, time_s, optca, optcr, modelstatus, u_s, v_s, y_s, z_s, g_s, zc_s ;
-execute_unloadIdx 'init_expdem_mip.gdx', time, optca, optcr, modelstatus, u, v, y, z, g, zc ;
+execute_unloadIdx 'init_expdem_mip.gdx', cost_tot, cost_gen, time, optca, optcr, modelstatus, u_s, v_s, y_s, z_s, g_s, zc_s ;
