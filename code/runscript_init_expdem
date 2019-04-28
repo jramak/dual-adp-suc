@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#files=uc15_1500md_15sig.gdx
+#for file in $files
+for i in {4..4..2}
+do
+for j in {15..25..5}
+do
+	file=uc15_${i}md_${j}sig.gdx
+	mkdir ub_${file%%.*}
+	cd ub_${file%%.*}
+	cp ~/jim_master_code/data/gen15/$file .
+	cp ~/jim_master_code/code/init_expdem_mip.gms . 
+	cp ~/jim_master_code/code/condor_gams .
+
+        echo "hostname" > ub_exp.run
+        echo "echo 'pwd'" >> ub_exp.run
+        echo "gams init_expdem_mip.gms --probdata=${file%%.*} --subprob=17 mip=cplex o=/dev/null lo=0" >> ub_exp.run
+#        echo "lb_main('${file%%.*}',500,50/${i},(0.99).^(0:499))" > script.m
+#        echo "lb_main('${file%%.*}',1,50/${i},(0.99).^(0))" > script.m
+ 
+	./condor_gams ub_exp.run "init_expdem_mip.gms,$file" &
+	cd ..
+done
+done
