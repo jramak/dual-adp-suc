@@ -7,7 +7,7 @@ irgdx(filename, 'Lu', 'Ld')
 
 z_prev = z_s(1:numGens, T);
 u_prev = u_s(1:numGens, T);
-gen_state = ones(numGens, 1) * (Lu + Ld); % initial start state
+gen_state = ones(numGens, 1) .* (Lu + Ld); % initial start state
 
 for i = 1:numGens
     for t = 1:T
