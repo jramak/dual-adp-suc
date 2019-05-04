@@ -1,9 +1,11 @@
-function [gen_state, z_prev, u_prev] = init_state_calc(filename,numGens)
+function [gen_state, z_prev, u_prev] = init_state_calc(filename)
 
 T = 72;
 
 irgdx('init_expdem_mip.gdx', 'u_s', 'z_s');
 irgdx(filename, 'Lu', 'Ld')
+
+numGens = length(Lu) - 2; % number of generators not including buy/sell
 
 z_prev = z_s(1:numGens, T);
 u_prev = u_s(1:numGens, T);
