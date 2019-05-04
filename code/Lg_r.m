@@ -123,7 +123,11 @@ cost = V2(Ld,1); % Lagrangian evaluation
 z_sol = nan(size(lambda));
 %z_idx_prev = nan;
 %gen_state = Lu+Ld; % initial start state
-[~, z_idx_prev] = min(abs(zPow1(gen_state,:,1) - z_prev))
+if gen_state > Lu
+    z_idx_prev = nan;
+else
+    [~, z_idx_prev] = min(abs(zPow1(gen_state,:,1) - z_prev))
+end
 myeps = 0.01;
 for t = 1:T
     % PART1
