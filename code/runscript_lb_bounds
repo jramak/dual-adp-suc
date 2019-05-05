@@ -25,6 +25,8 @@ do
 	cp ~/dual-adp-suc/code/startup.m .
 	cp ~/dual-adp-suc/code/Lg_condor.run .
 	cp ~/dual-adp-suc/code/condor_gams_8CPU_4MEM_12DISK .
+	cp ~/dual-adp-suc/code/init_state_calc.m .
+	cp ~/dual-adp-suc/numerical_runs/gen15/exp_run/ub_uc15_${i}md_${j}sig/init_expdem_mip.gdx .
 
         # 15 gen has maxDemand = 4660
         # 30 gen has maxDemand = 6286.2
@@ -38,7 +40,7 @@ do
 #        echo "lb_main('${file%%.*}',1,50/${i},(0.99).^(0))" > script.m
         export REQUEST_CPUS=4
 
-	./condor_gams_8CPU_4MEM_12DISK Lg_condor.run "script.m,lb_main.m,per_info_mip_single.gms,run_per_info_mip.m,max_Lg_r_d.m,max_Lg_r.m,Lg_r_d.m,Lg_r.m,Lg_d.m,Lg.m,eval_pwl.m,lp_power.m,gendist.m,startup.m,$file" &
+	./condor_gams_8CPU_4MEM_12DISK Lg_condor.run "script.m,lb_main.m,per_info_mip_single.gms,run_per_info_mip.m,max_Lg_r_d.m,max_Lg_r.m,Lg_r_d.m,Lg_r.m,Lg_d.m,Lg.m,eval_pwl.m,lp_power.m,gendist.m,startup.m,init_state_calc.m,init_expdem_mip.gdx,$file" &
 	cd ..
 done
 done
