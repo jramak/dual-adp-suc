@@ -1,6 +1,6 @@
 function [cost,z_sol,z_sol_std,V1,uGen1,V2,uGen2] = Lg_r_d(q,c,qmin,...
     qmax,c_bar,h_bar,Lu,Ld,ps,lambda,T,Rd_i,Ru_i,nPts,paths,P,F,...
-    numDemands,Pstep)
+    numDemands,Pstep,gen_state_init,z_prev)
 % all inputs are in column form (if they are vectors)
 
 % number of states = Lu + Ld
@@ -9,7 +9,7 @@ function [cost,z_sol,z_sol_std,V1,uGen1,V2,uGen2] = Lg_r_d(q,c,qmin,...
 % T = 168; % time periods
 
 % pre-compute matrices for DP runs
-% pow_s = cell(Lu,1); 
+% pow_s = cell(Lu,1);
 idx_s = cell(Lu,1);
 P_mat_s = cell(Lu,1);
 F_mat_s = cell(Lu,1);
@@ -24,8 +24,8 @@ for i = 1:(Lu-1)
         % and also one discretization point below p(j)-Rd
         % this ensures algorithm outputs true lower bound
         tmp_idx2 = ((p(j)-Rd_i-Pstep) > P) | (P > (p(j)+Ru_i+Pstep));
-        tmp_P_mat(tmp_idx2,j) = inf; 
-        tmp_F_mat(tmp_idx2,j) = inf; 
+        tmp_P_mat(tmp_idx2,j) = inf;
+        tmp_F_mat(tmp_idx2,j) = inf;
     end
     P_mat_s{i} = tmp_P_mat;
     F_mat_s{i} = tmp_F_mat;
@@ -37,8 +37,8 @@ tmp_P_mat = repmat(P,1,length(p));
 tmp_F_mat = repmat(F,1,length(p));
 for j = 1:length(p)
     tmp_idx2 = ((p(j)-Rd_i-Pstep) > P) | (P > (p(j)+Ru_i+Pstep));
-    tmp_P_mat(tmp_idx2,j) = inf; 
-    tmp_F_mat(tmp_idx2,j) = inf; 
+    tmp_P_mat(tmp_idx2,j) = inf;
+    tmp_F_mat(tmp_idx2,j) = inf;
 end
 P_mat_s{Lu} = tmp_P_mat;
 F_mat_s{Lu} = tmp_F_mat;
@@ -70,7 +70,7 @@ tmp_idx_n = idx_s{1};
 tmp_P = P(tmp_idx_n);
 tmp_F = F(tmp_idx_n);
 % backwards recursion
-for t = T:-1:1  
+for t = T:-1:1
     % PART1
     % for states l = 1, 2, ..., Lu, need previous power levels for state
 
@@ -89,7 +89,7 @@ for t = T:-1:1
 
     % for l = Lu, generator can turn off or stay on
     idx = idx_s{Lu};
-    uGen1(Lu,idx,t) = 1; % assume generator is turned on 
+    uGen1(Lu,idx,t) = 1; % assume generator is turned on
     tmp_V = repmat(V1(Lu,:,t+1)',1,length(idx));
     V1(Lu,idx,t) = 0;
     for j = 1:numDemands
@@ -101,8 +101,8 @@ for t = T:-1:1
     tmp_flag = (V2(1,t+1) < V1(Lu,idx,t)) & can_off_flag';
     uGen1(Lu,tmp_flag,t) = 0; % generator is turned off
     V1(Lu,tmp_flag,t) = V2(1,t+1);
-    zPow1(Lu,tmp_flag,t,:) = 0; 
-    zIdx1(Lu,tmp_flag,t,:) = nan; 
+    zPow1(Lu,tmp_flag,t,:) = 0;
+    zIdx1(Lu,tmp_flag,t,:) = nan;
 
     % PART2
     % for states l = Lu+1, Lu+2, ..., Lu+Ld, previous power level 0
@@ -122,7 +122,7 @@ for t = T:-1:1
 	V2(Ld,t) = V2(Ld,t) + ps(j).*tmp_out;
         zPow2(Ld,t,j) = tmp_P(zIdx2(Ld,t,j));
     end
-    % stay off if 
+    % stay off if
     if V2(Ld,t+1) < V2(Ld,t)
         uGen2(Ld,t) = 0;
         V2(Ld,t) = V2(Ld,t+1);
@@ -137,8 +137,12 @@ cost = V2(Ld,1); % Lagrangian evaluation
 z_sol_mat = nan(length(ps),T,paths); % solution for every sample path
                              % numDemands x T x numsamplepaths
 for k = 1:paths
-    z_idx_prev = nan;
-    gen_state = Lu+Ld; % initial start state
+    gen_state = gen_state_init; % initial start state
+    if gen_state > Lu
+        z_idx_prev = nan;
+    else
+        [~, z_idx_prev] = min(abs(P - z_prev));
+    end
     for t = 1:T
         % PART1
         % for states l = 1, 2, ..., Lu, need previous power levels for state
@@ -166,7 +170,7 @@ for k = 1:paths
             % generator must stay off
             z_sol_mat(:,t,k) = zPow2(gen_state-Lu,t,:);
             z_idx_prev = zIdx2(gen_state-Lu,t,D_idx(t,k));
-            gen_state = gen_state + 1; 
+            gen_state = gen_state + 1;
 %             assert(all(z_sol_mat(:,t,k) == 0));
 %             assert(isnan(z_idx_prev));
         elseif (gen_state == (Lu+Ld))
