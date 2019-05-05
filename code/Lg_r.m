@@ -126,7 +126,7 @@ z_sol = nan(size(lambda));
 if gen_state > Lu
     z_idx_prev = nan;
 else
-    [~, z_idx_prev] = min(abs(zPow1(gen_state,:,1) - z_prev))
+    [~, z_idx_prev] = min(abs(P - z_prev))
 end
 myeps = 0.01;
 for t = 1:T
