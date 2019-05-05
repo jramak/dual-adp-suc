@@ -1,5 +1,5 @@
 function [best_cost,best_idx,opt_cost_vec,time,tot_time,L_g_cost,...
-    z_sol_avg,z_sol_std] = max_Lg_r_d(filename,maxIters,rho0,stepVec)
+    z_sol_avg,z_sol_std] = max_Lg_r_d(filename,maxIters,rho0,stepVec,gen_state,z_prev)
 
 % load in from data file
 irgdx(filename);
@@ -102,7 +102,8 @@ for k = 1:maxIters
             uGen1{i},V2{i},uGen2{i}] = ...
             Lg_r_d(q(i,1:numPts(i))',c(i,1:numPts(i))',q_min(i),...
             q_max(i),c_bar(i),h_bar(i),Lu(i),Ld(i),p_s,lambda,T,Rd(i),...
-            Ru(i),nPts,paths,Pow(:,i),Feval(:,i),quadPts,Pstep(i));
+            Ru(i),nPts,paths,Pow(:,i),Feval(:,i),quadPts,Pstep(i),...
+            gen_state(i),z_prev(i));
         time(i) = toc(tind);
     end
     tind = tic;
