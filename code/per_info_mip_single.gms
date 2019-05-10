@@ -102,12 +102,12 @@ Parameter
 $load D_s_lb
 
 Scalar
-         u_prev   initial commitment state ;
-$load u_prev
+         u_init   initial commitment state ;
+$load u_init
 
 Scalar
-         z_prev   initial generation state ;
-$load z_prev
+         z_init   initial generation state ;
+$load z_init
 
 Parameter
          stay_on(i)   initial time for generator to stay on ;
@@ -148,14 +148,14 @@ Equations
 
 cost ..                zc=e=sum((i,t),y(i,t)+c_bar(i)*u(i,t)+h_bar(i)*v(i,t));
 demEq(t) ..            sum(i$(ord(i) ne %subprob%),z(i,t))-z('%subprob%',t)=e=d(t);
-turnOn1(i) ..          v(i,'1')=g=u(i,'1')-u_prev;
+turnOn1(i) ..          v(i,'1')=g=u(i,'1')-u_init;
 turnOn2(i,t)$(ord(t) gt 1) .. v(i,t)=g=u(i,t)-u(i,t-1);
 turnOnEq1(i,t)$(ord(t) le Lu(i)) .. sum(r$(ord(r) ge 1 and ord(r) le ord(t)),v(i,r))=l=u(i,t);
 turnOnEq2(i,t)$(ord(t) gt Lu(i)) .. sum(r$(ord(r) ge ord(t)-Lu(i)+1 and ord(r) le ord(t)),v(i,r))=l=u(i,t);
 turnOffEq1(i,t)$(ord(t) le Ld(i)) .. sum(r$(ord(r) ge 1 and ord(r) le ord(t)),v(i,r))=l=1-u(i,t-Ld(i));
 turnOffEq2(i,t)$(ord(t) gt Ld(i)) .. sum(r$(ord(r) ge ord(t)-Ld(i)+1 and ord(r) le ord(t)),v(i,r))=l=1-u(i,t-Ld(i));
-rampUpEq1(i,t) .. z(i,'1') =l= z_prev + Ru(i) + v(i,'1')*q_min(i);
-rampDownEq1(i,t) .. z_prev - Rd(i) - (1-u(i,'1'))*q_min(i) =l= z(i,'1');
+rampUpEq1(i,t) .. z(i,'1') =l= z_init + Ru(i) + v(i,'1')*q_min(i);
+rampDownEq1(i,t) .. z_init - Rd(i) - (1-u(i,'1'))*q_min(i) =l= z(i,'1');
 rampUpEq2(i,t) .. z(i,t) =l= z(i,t-1) + Ru(i) + v(i,t)*q_min(i);
 rampDownEq2(i,t) .. z(i,t-1) - Rd(i) - (1-u(i,t))*q_min(i) =l= z(i,t);
 
