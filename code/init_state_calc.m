@@ -9,7 +9,7 @@ numGens = length(Lu) - 2; % number of generators not including buy/sell
 
 z_prev = z_s(1:numGens, T);
 u_prev = u_s(1:numGens, T);
-gen_state = ones(numGens+2, 1) .* Lu + Ld; % initial start state
+gen_state = ones(numGens+2, 1) .* (Lu + Ld); % initial start state
 stay_on = zeros(numGens+2, 1);
 stay_off = zeros(numGens+2, 1);
 
