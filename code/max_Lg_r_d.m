@@ -1,5 +1,5 @@
 function [best_cost,best_idx,opt_cost_vec,time,tot_time,L_g_cost,...
-    z_sol_avg,z_sol_std] = max_Lg_r_d(filename,maxIters,rho0,stepVec,gen_state,z_prev)
+    z_sol_avg,z_sol_std] = max_Lg_r_d(filename,maxIters,rho0,stepVec)
 
 % load in from data file
 irgdx(filename);
@@ -19,6 +19,8 @@ D_s_ub = D_s_ub;
 D_s_idx_ub = D_s_idx_ub;
 q_min = q_min;
 q_max = q_max;
+gen_state = gen_state;
+z_prev = z_prev;
 
 numGens = length(Lu) - 2; % number of generators not including buy/sell
 T = 168;
