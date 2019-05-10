@@ -101,6 +101,22 @@ Parameter
          D_s_lb(t,s)   demand sample paths ;
 $load D_s_lb
 
+Scalar
+         u_prev   initial commitment state ;
+$load u_prev
+
+Scalar
+         z_prev   initial generation state ;
+$load z_prev
+
+Parameter
+         stay_on(i)   initial time for generator to stay on ;
+$load stay_on
+
+Parameter
+         stay_off(i)   initial time for generator to stay off ;
+$load stay_off
+
 $GDXin
 
 Equations
@@ -112,8 +128,10 @@ Equations
          turnOnEq2(i,t)        second set of turn on inequalities
          turnOffEq1(i,t)       first set of turn off inequalities
          turnOffEq2(i,t)       second set of turn off inequalities
-         rampUpEq(i,t)         ramp up constraints
-         rampDownEq(i,t)       ramp down constraints
+         rampUpEq1(i,t)        first set of ramp up constraints
+         rampDownEq1(i,t)      first set of ramp down constraints
+         rampUpEq2(i,t)        second set of ramp up constraints
+         rampDownEq2(i,t)      second set of ramp down constraints
 
          PWLEq1(i,t)           1st set of PWL eq
          PWLEq2(i,t)           2nd set of PWL eq
@@ -130,14 +148,16 @@ Equations
 
 cost ..                zc=e=sum((i,t),y(i,t)+c_bar(i)*u(i,t)+h_bar(i)*v(i,t));
 demEq(t) ..            sum(i$(ord(i) ne %subprob%),z(i,t))-z('%subprob%',t)=e=d(t);
-turnOn1(i) ..          v(i,'1')=e=u(i,'1');
+turnOn1(i) ..          v(i,'1')=g=u(i,'1')-u_prev;
 turnOn2(i,t)$(ord(t) gt 1) .. v(i,t)=g=u(i,t)-u(i,t-1);
 turnOnEq1(i,t)$(ord(t) le Lu(i)) .. sum(r$(ord(r) ge 1 and ord(r) le ord(t)),v(i,r))=l=u(i,t);
 turnOnEq2(i,t)$(ord(t) gt Lu(i)) .. sum(r$(ord(r) ge ord(t)-Lu(i)+1 and ord(r) le ord(t)),v(i,r))=l=u(i,t);
 turnOffEq1(i,t)$(ord(t) le Ld(i)) .. sum(r$(ord(r) ge 1 and ord(r) le ord(t)),v(i,r))=l=1-u(i,t-Ld(i));
 turnOffEq2(i,t)$(ord(t) gt Ld(i)) .. sum(r$(ord(r) ge ord(t)-Ld(i)+1 and ord(r) le ord(t)),v(i,r))=l=1-u(i,t-Ld(i));
-rampUpEq(i,t) .. z(i,t) =l= z(i,t-1) + Ru(i) + v(i,t)*q_min(i);
-rampDownEq(i,t) .. z(i,t-1) - Rd(i) - (1-u(i,t))*q_min(i) =l= z(i,t);
+rampUpEq1(i,t) .. z(i,'1') =l= z_prev + Ru(i) + v(i,'1')*q_min(i);
+rampDownEq1(i,t) .. z_prev - Rd(i) - (1-u(i,'1'))*q_min(i) =l= z(i,'1');
+rampUpEq2(i,t) .. z(i,t) =l= z(i,t-1) + Ru(i) + v(i,t)*q_min(i);
+rampDownEq2(i,t) .. z(i,t-1) - Rd(i) - (1-u(i,t))*q_min(i) =l= z(i,t);
 
 *PWLEq1(i,t)$(ord(i) le numGens) .. sum(kk,g(i,t,kk)) =e= u(i,t);
 *PWLEq2(i,t)$(ord(i) le numGens) .. z(i,t) =e= sum(kk,Pow(kk,i)*g(i,t,kk));
@@ -157,6 +177,8 @@ PWLEq3(i,t) .. y(i,t) =e= sum(dynk(i,k),cn(i,k)*g(i,t,k));
 *PWLEq2s(i,t)$(ord(i) eq (numGens+2)) .. z(i,t) =e= sum(dynk(i,k),q(i,k)*gs(i,t,k));
 *PWLEq3s(i,t)$(ord(i) eq (numGens+2)) .. y(i,t) =e= sum(dynk(i,k),c(i,k)*gs(i,t,k));
 
+u.fx(i, t)$(ord(t) le stay_on(i)) = 1
+u.fx(i, t)$(ord(t) le stay_off(i)) = 0
 
 Model UC /all/ ;
 
