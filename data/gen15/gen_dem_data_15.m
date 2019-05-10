@@ -321,6 +321,42 @@ numPts_n(numGens+2) = numPts(numGens+2);
 % D_s_lb (ub) = 168 by 100 matrix for lower (upper) bound runs
 %             = each column represents one sample path
 
+% initial state calculation
+init_T = 72;
+irgdx(['init_expdem_',filename], 'u_s', 'z_s');
+
+numGens = length(Lu) - 2; % number of generators not including buy/sell
+
+z_prev = z_s(1:numGens, init_T);
+u_prev = u_s(1:numGens, init_T);
+gen_state = ones(numGens+2, 1) .* Lu + Ld; % initial start state
+stay_on = zeros(numGens+2, 1);
+stay_off = zeros(numGens+2, 1);
+
+for i = 1:numGens
+    for t = 1:init_T
+        if (gen_state(i) < Lu(i))
+            gen_state(i) = gen_state(i) + 1;
+        elseif ((gen_state(i) == Lu(i)) && (u_s(i, t) == 0))
+            gen_state(i) = gen_state(i) + 1;
+        elseif ((Lu(i) < gen_state(i)) && (gen_state(i) < (Lu(i) + Ld(i))))
+            gen_state(i) = gen_state(i) + 1;
+        elseif ((gen_state(i) == (Lu(i) + Ld(i))) && (u_s(i, t) == 1))
+            gen_state(i) = 1;
+        end
+    end
+end
+
+for i = 1:numGens
+    if gen_state(i) < Lu(i)
+        stay_on(i) = Lu(i) - gen_state(i)
+    end
+    if (gen_state(i) > Lu(i)) && (gen_state(i) < (Lu(i) + Ld(i)))
+        stay_off(i) = (Lu(i) + Ld(i)) - gen_state(i)
+    end
+end
+
+
 iwgdx(['uc15_',num2str(10*maxDemand_mult),'md_',num2str(percent_sig*100),...
     'sig.gdx'],'q',q,'c',c,'numPts',numPts,'h_bar',h_bar,'c_bar',c_bar,...
     'Ld',Ld,'Lu',Lu,'d',d,'D_s_lb',D_s_lb,'D_s_idx_lb',D_idx_lb,...
@@ -328,4 +364,5 @@ iwgdx(['uc15_',num2str(10*maxDemand_mult),'md_',num2str(percent_sig*100),...
     'q_min',q_min,'q_max',q_max,'maxDemand',maxDemand,...
     'percent_sig',percent_sig,'Rd',Rd,'Ru',Ru,'nPts',nPts,...
     'Pow',Pow,'Feval',Feval,'numGens',numGens,'T',T,'quadPts',quadPts,...
-    'Pstep',Pstep,'qn',qn,'cn',cn,'numPts_n',numPts_n);
+    'Pstep',Pstep,'qn',qn,'cn',cn,'numPts_n',numPts_n,'gen_state',gen_state,...
+    'z_prev',z_prev,'u_prev',u_prev,'stay_on',stay_on,'stay_off',stay_off);
