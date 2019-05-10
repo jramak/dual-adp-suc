@@ -273,4 +273,4 @@ g_s(i,t,k) = g.l(i,t,k) ;
 zc_s = zc.l ;
 
 *execute_unloadIdx 'ub_expdem_mip.gdx', cost_tot, cost_gen, time, time_s, optca, optcr, modelstatus, u_s, v_s, y_s, z_s, g_s, zc_s ;
-execute_unloadIdx 'init_expdem_mip.gdx', cost_tot, cost_gen, time, optca, optcr, modelstatus, u_s, v_s, y_s, z_s, g_s, zc_s ;
+execute_unloadIdx 'init_expdem_%probdata%', cost_tot, cost_gen, time, optca, optcr, modelstatus, u_s, v_s, y_s, z_s, g_s, zc_s ;
