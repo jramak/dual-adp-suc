@@ -322,7 +322,7 @@ numPts_n(numGens+2) = numPts(numGens+2);
 %             = each column represents one sample path
 
 filename = ['uc50_',num2str(10*maxDemand_mult),'md_',...
-            num2str(percent_sig*100),'sig.gdx']
+            num2str(percent_sig*100),'sig.gdx'];
 
 % initial state calculation
 init_T = 72;
@@ -352,10 +352,10 @@ end
 
 for i = 1:numGens
     if gen_state(i) < Lu(i)
-        stay_on(i) = Lu(i) - gen_state(i)
+        stay_on(i) = Lu(i) - gen_state(i);
     end
     if (gen_state(i) > Lu(i)) && (gen_state(i) < (Lu(i) + Ld(i)))
-        stay_off(i) = (Lu(i) + Ld(i)) - gen_state(i)
+        stay_off(i) = (Lu(i) + Ld(i)) - gen_state(i);
     end
 end
 
