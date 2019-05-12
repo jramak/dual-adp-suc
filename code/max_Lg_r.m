@@ -20,7 +20,7 @@ D_s_idx_ub = D_s_idx_ub;
 q_min = q_min;
 q_max = q_max;
 gen_state = gen_state;
-z_prev = z_prev;
+z_init = z_init;
 
 numGens = length(Lu) - 2; % number of generators not including buy/sell
 T = 168;
@@ -103,7 +103,7 @@ for k = 1:maxIters
         [L_g_cost(i),z_sol_avg(:,i),V1{i},uGen1{i},V2{i},uGen2{i}] = ...
             Lg_r(q_min(i),q_max(i),c_bar(i),h_bar(i),Lu(i),Ld(i),lambda,...
             T,Rd(i),Ru(i),nPts,Pow(:,i),Feval(:,i),Pstep(i),gen_state(i),...
-            z_prev(i));
+            z_init(i));
         time(i) = toc(tind);
     end
     tind = tic;

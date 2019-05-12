@@ -20,7 +20,7 @@ D_s_idx_ub = D_s_idx_ub;
 q_min = q_min;
 q_max = q_max;
 gen_state = gen_state;
-z_prev = z_prev;
+z_init = z_init;
 
 numGens = length(Lu) - 2; % number of generators not including buy/sell
 T = 168;
@@ -105,7 +105,7 @@ for k = 1:maxIters
             Lg_r_d(q(i,1:numPts(i))',c(i,1:numPts(i))',q_min(i),...
             q_max(i),c_bar(i),h_bar(i),Lu(i),Ld(i),p_s,lambda,T,Rd(i),...
             Ru(i),nPts,paths,Pow(:,i),Feval(:,i),quadPts,Pstep(i),...
-            gen_state(i),z_prev(i));
+            gen_state(i),z_init(i));
         time(i) = toc(tind);
     end
     tind = tic;

@@ -1,5 +1,5 @@
 function [cost,z_sol,V1,uGen1,V2,uGen2] = Lg_r(qmin,qmax,c_bar,h_bar,...
-    Lu,Ld,lambda,T,Rd_i,Ru_i,nPts,P,F,Pstep,gen_state,z_prev)
+    Lu,Ld,lambda,T,Rd_i,Ru_i,nPts,P,F,Pstep,gen_state,z_init)
 % all inputs are in column form (if they are vectors)
 
 % number of states = Lu + Ld
@@ -126,7 +126,7 @@ z_sol = nan(size(lambda));
 if gen_state > Lu
     z_idx_prev = nan;
 else
-    [~, z_idx_prev] = min(abs(P - z_prev));
+    [~, z_idx_prev] = min(abs(P - z_init));
 end
 myeps = 0.01;
 for t = 1:T

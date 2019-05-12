@@ -1,6 +1,6 @@
 function [cost,z_sol,z_sol_std,V1,uGen1,V2,uGen2] = Lg_r_d(q,c,qmin,...
     qmax,c_bar,h_bar,Lu,Ld,ps,lambda,T,Rd_i,Ru_i,nPts,paths,P,F,...
-    numDemands,Pstep,gen_state_init,z_prev)
+    numDemands,Pstep,gen_state_init,z_init)
 % all inputs are in column form (if they are vectors)
 
 % number of states = Lu + Ld
@@ -141,7 +141,7 @@ for k = 1:paths
     if gen_state > Lu
         z_idx_prev = nan;
     else
-        [~, z_idx_prev] = min(abs(P - z_prev));
+        [~, z_idx_prev] = min(abs(P - z_init));
     end
     for t = 1:T
         % PART1
