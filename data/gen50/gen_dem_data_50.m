@@ -330,8 +330,8 @@ irgdx(['init_expdem_',filename], 'u_s', 'z_s');
 
 numGens = length(Lu) - 2; % number of generators not including buy/sell
 
-z_init = z_s(1:numGens, init_T);
-u_init = u_s(1:numGens, init_T);
+z_init = [z_s(1:numGens, init_T); 0; 0];
+u_init = [u_s(1:numGens, init_T); 0; 0];
 gen_state = ones(numGens+2, 1) .* (Lu + Ld); % initial start state
 stay_on = zeros(numGens+2, 1);
 stay_off = zeros(numGens+2, 1);
