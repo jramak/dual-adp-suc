@@ -25,8 +25,8 @@ do
 	cp ~/dual-adp-suc/code/startup.m .
 	cp ~/dual-adp-suc/code/Lg_condor.run .
 	cp ~/dual-adp-suc/code/condor_gams_8CPU_4MEM_12DISK .
-	cp ~/dual-adp-suc/code/init_state_calc.m .
-	cp ~/dual-adp-suc/numerical_runs/gen15/exp_run/ub_uc15_${i}md_${j}sig/init_expdem_mip.gdx .
+	#cp ~/dual-adp-suc/code/init_state_calc.m .
+	#cp ~/dual-adp-suc/numerical_runs/gen15/exp_run/ub_uc15_${i}md_${j}sig/init_expdem_mip.gdx .
 
         # 15 gen has maxDemand = 4660
         # 30 gen has maxDemand = 6286.2
@@ -34,7 +34,7 @@ do
         # it changed!! below are new maxDemands
         # 15 gen has maxDemand = 3421.5
         # 30 gen has maxDemand = 6783.8
-        # 50 gen has maxDemand = 9870.5 
+        # 50 gen has maxDemand = 9870.5
         # Use rho = 50 / (0.4 * maxDemand)
         echo "lb_main('${file%%.*}',250,50/(${i}*0.1*3421.5),(0.99).^(0:249))" > script.m
 #        echo "lb_main('${file%%.*}',1,50/${i},(0.99).^(0))" > script.m
