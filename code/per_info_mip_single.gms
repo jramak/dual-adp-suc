@@ -177,8 +177,8 @@ PWLEq3(i,t) .. y(i,t) =e= sum(dynk(i,k),cn(i,k)*g(i,t,k));
 *PWLEq2s(i,t)$(ord(i) eq (numGens+2)) .. z(i,t) =e= sum(dynk(i,k),q(i,k)*gs(i,t,k));
 *PWLEq3s(i,t)$(ord(i) eq (numGens+2)) .. y(i,t) =e= sum(dynk(i,k),c(i,k)*gs(i,t,k));
 
-u.fx(i, t)$(ord(t) le stay_on(i)) = 1
-u.fx(i, t)$(ord(t) le stay_off(i)) = 0
+u.fx(i, t)$(ord(t) le stay_on(i)) = 1 ;
+u.fx(i, t)$(ord(t) le stay_off(i)) = 0 ;
 
 Model UC /all/ ;
 
