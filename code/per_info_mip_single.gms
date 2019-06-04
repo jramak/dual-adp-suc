@@ -128,8 +128,8 @@ Equations
          turnOnEq2(i,t)        second set of turn on inequalities
          turnOffEq1(i,t)       first set of turn off inequalities
          turnOffEq2(i,t)       second set of turn off inequalities
-         rampUpEq1(i,t)        first set of ramp up constraints
-         rampDownEq1(i,t)      first set of ramp down constraints
+         rampUpEq1(i)          first set of ramp up constraints
+         rampDownEq1(i)        first set of ramp down constraints
          rampUpEq2(i,t)        second set of ramp up constraints
          rampDownEq2(i,t)      second set of ramp down constraints
 
@@ -154,10 +154,10 @@ turnOnEq1(i,t)$(ord(t) le Lu(i)) .. sum(r$(ord(r) ge 1 and ord(r) le ord(t)),v(i
 turnOnEq2(i,t)$(ord(t) gt Lu(i)) .. sum(r$(ord(r) ge ord(t)-Lu(i)+1 and ord(r) le ord(t)),v(i,r))=l=u(i,t);
 turnOffEq1(i,t)$(ord(t) le Ld(i)) .. sum(r$(ord(r) ge 1 and ord(r) le ord(t)),v(i,r))=l=1-u(i,t-Ld(i));
 turnOffEq2(i,t)$(ord(t) gt Ld(i)) .. sum(r$(ord(r) ge ord(t)-Ld(i)+1 and ord(r) le ord(t)),v(i,r))=l=1-u(i,t-Ld(i));
-rampUpEq1(i,t) .. z(i,'1') =l= z_init(i) + Ru(i) + v(i,'1')*q_min(i);
-rampDownEq1(i,t) .. z_init(i) - Rd(i) - (1-u(i,'1'))*q_min(i) =l= z(i,'1');
-rampUpEq2(i,t) .. z(i,t) =l= z(i,t-1) + Ru(i) + v(i,t)*q_min(i);
-rampDownEq2(i,t) .. z(i,t-1) - Rd(i) - (1-u(i,t))*q_min(i) =l= z(i,t);
+rampUpEq1(i) .. z(i,'1') =l= z_init(i) + Ru(i) + v(i,'1')*q_min(i);
+rampDownEq1(i) .. z_init(i) - Rd(i) - (1-u(i,'1'))*q_min(i) =l= z(i,'1');
+rampUpEq2(i,t)$(ord(t) gt 1) .. z(i,t) =l= z(i,t-1) + Ru(i) + v(i,t)*q_min(i);
+rampDownEq2(i,t)$(ord(t) gt 1) .. z(i,t-1) - Rd(i) - (1-u(i,t))*q_min(i) =l= z(i,t);
 
 *PWLEq1(i,t)$(ord(i) le numGens) .. sum(kk,g(i,t,kk)) =e= u(i,t);
 *PWLEq2(i,t)$(ord(i) le numGens) .. z(i,t) =e= sum(kk,Pow(kk,i)*g(i,t,kk));
