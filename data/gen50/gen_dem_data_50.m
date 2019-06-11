@@ -334,7 +334,7 @@ numGens = length(Lu) - 2; % number of generators not including buy/sell
 z_init = zeros(numGens+2, 1);
 u_init = [u_s(1:numGens, init_T); 0; 0];
 for i = 1:numGens
-    if u_init == 1
+    if u_init(i) == 1
         [~, tmp_idx] = min(abs(Pow(:, i) - z_s(i, init_T)));
         z_init(i) = Pow(tmp_idx, i);
     end
