@@ -3,7 +3,7 @@ function [ub_cost,ub_time,optca_mat,modelstat_mat,...
 
 load(['max_Lg_r_d_',filename]);
 
-irgdx(filename,'D_s_ub','D_s_idx_ub');
+irgdx(filename,'D_s_ub','D_s_idx_ub', 'gen_state', 'u_init', 'z_init');
 
 % compute upper bound from policy
 [~,numSamples] = size(D_s_ub);
