@@ -133,7 +133,14 @@ end
 
 % move forward in time to generate solution for gradient computation
 D_idx = gendist(ps',T,paths); % demand indices T x numsamplepaths
-cost = V2(Ld,1); % Lagrangian evaluation
+if gen_state_init > Lu
+    cost = V2(gen_state_init - Lu, 1);
+else
+    [z_init_tmp, z_idx_prev] = min(abs(P - z_init));
+    assert(abs(z_init_tmp - z_init) < 0.0001);
+    cost = V1(gen_state_init, z_idx_prev, 1);
+end
+%cost = V2(Ld,1); % Lagrangian evaluation
 z_sol_mat = nan(length(ps),T,paths); % solution for every sample path
                              % numDemands x T x numsamplepaths
 for k = 1:paths
@@ -141,7 +148,8 @@ for k = 1:paths
     if gen_state > Lu
         z_idx_prev = nan;
     else
-        [~, z_idx_prev] = min(abs(P - z_init));
+        [z_init_tmp, z_idx_prev] = min(abs(P - z_init));
+        assert(abs(z_init_tmp - z_init) < 0.0001);
     end
     for t = 1:T
         % PART1

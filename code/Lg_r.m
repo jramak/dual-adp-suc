@@ -119,14 +119,17 @@ for t = T:-1:1
 end
 
 % move forward in time to generate solution
-cost = V2(Ld,1); % Lagrangian evaluation
+%cost = V2(Ld,1); % Lagrangian evaluation
 z_sol = nan(size(lambda));
 %z_idx_prev = nan;
 %gen_state = Lu+Ld; % initial start state
 if gen_state > Lu
     z_idx_prev = nan;
+    cost = V2(gen_state - Lu, 1);
 else
-    [~, z_idx_prev] = min(abs(P - z_init));
+    [z_init_tmp, z_idx_prev] = min(abs(P - z_init));
+    assert(abs(z_init_tmp - z_init) < 0.0001);
+    cost = V1(gen_state, z_idx_prev, 1);
 end
 myeps = 0.01;
 for t = 1:T
