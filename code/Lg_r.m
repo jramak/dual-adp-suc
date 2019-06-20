@@ -127,8 +127,8 @@ if gen_state > Lu
     z_idx_prev = nan;
     cost = V2(gen_state - Lu, 1);
 else
-    [z_init_tmp, z_idx_prev] = min(abs(P - z_init));
-    assert(abs(z_init_tmp - z_init) < 0.0001);
+    [~, z_idx_prev] = min(abs(P - z_init));
+    assert(abs(P(z_idx_prev) - z_init) < 0.0001);
     cost = V1(gen_state, z_idx_prev, 1);
 end
 myeps = 0.01;
