@@ -1,6 +1,7 @@
 function [cost,z_sol,z_sol_std,V1,uGen1,V2,uGen2] = Lg_r_d(q,c,qmin,...
     qmax,c_bar,h_bar,Lu,Ld,ps,lambda,T,Rd_i,Ru_i,nPts,paths,P,F,...
     numDemands,Pstep,gen_state_init,z_init)
+tol = 0.0001; % tol for equality
 % all inputs are in column form (if they are vectors)
 
 % number of states = Lu + Ld
@@ -167,11 +168,11 @@ for k = 1:paths
             gen_state = gen_state + 1;
 %             assert(all(z_sol_mat(:,t,k) > 0));
 %             assert(~isnan(z_idx_prev));
-        elseif gen_state == Lu
+        elseif abs(gen_state - Lu) < tol
             % generator could stay on or turn off
             z_sol_mat(:,t,k) = zPow1(gen_state,z_idx_prev,t,:);
             z_idx_prev = zIdx1(gen_state,z_idx_prev,t,D_idx(t,k));
-            if z_sol_mat(D_idx(t,k),t,k) == 0
+            if abs(z_sol_mat(D_idx(t,k),t,k)) < tol
                 gen_state = gen_state + 1;
             end
         elseif ((Lu < gen_state) && (gen_state < Lu+Ld))
@@ -179,9 +180,9 @@ for k = 1:paths
             z_sol_mat(:,t,k) = zPow2(gen_state-Lu,t,:);
             z_idx_prev = zIdx2(gen_state-Lu,t,D_idx(t,k));
             gen_state = gen_state + 1;
-%             assert(all(z_sol_mat(:,t,k) == 0));
+%             assert(all(abs(z_sol_mat(:,t,k) - 0) < tol));
 %             assert(isnan(z_idx_prev));
-        elseif (gen_state == (Lu+Ld))
+        elseif abs(gen_state - (Lu+Ld)) < tol
             % generator can stay off or turn on
             z_sol_mat(:,t,k) = zPow2(gen_state-Lu,t,:);
             z_idx_prev = zIdx2(gen_state-Lu,t,D_idx(t,k));
@@ -189,7 +190,7 @@ for k = 1:paths
                 gen_state = 1;
 %                 assert(~isnan(z_idx_prev));
             else
-%                 assert(zPow2(gen_state-Lu,t,D_idx(t,k)) == 0);
+%                 assert(abs(zPow2(gen_state-Lu,t,D_idx(t,k))) < tol);
 %                 assert(isnan(z_idx_prev));
             end
         else

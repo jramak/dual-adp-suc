@@ -45,10 +45,11 @@ for t = T:-1:1
     end
 end
 
+tol = 0.0001
 cost = V(Lu+Ld,1);
 state = Lu+Ld;
 for t = 1:T
-    if (state == Lu+Ld)
+    if abs(state - (Lu+Ld)) < tol
         % generator can either be on or off!
         % solve LP and DP update here
         if (V(state,t+1) <= (LP_cost(t) + c_bar + h_bar + V(1,t+1)))
@@ -60,7 +61,7 @@ for t = 1:T
         % generator must be on
         % and next state is l+1
         state = state + 1;
-    elseif (state == Lu)
+    elseif abs(state - Lu) < tol
         % generator can be either on or off!
         % solve LP and DP update here
         if (V(state+1,t+1) <= (LP_cost(t) + c_bar + V(state,t+1)))

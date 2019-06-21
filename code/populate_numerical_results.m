@@ -1,3 +1,4 @@
+tol = 0.0001
 % 15 gen problem
 mat_res = dir('./gen15/lb_bounds/lb_*');
 num = length(mat_res);
@@ -11,8 +12,8 @@ for idx_i = 1:num
   cd(['gen15/lb_bounds/',filename]);
   m_v = str2num(filename(9));
   sig_v = str2num(filename(13:14));
-  m_idx = find(m == m_v);
-  sig_idx = find(sig == sig_v);
+  m_idx = find(abs(m - m_v) < tol);
+  sig_idx = find(abs(sig - sig_v) < tol);
   lin_idx = 3 * (m_idx - 1) + sig_idx;
   lb_bounds_15(lin_idx, 1) = m_v * 0.1;
   lb_bounds_15(lin_idx, 2) = sig_v * 0.01;
@@ -22,24 +23,24 @@ for idx_i = 1:num
   solve_times_15(lin_idx, 3) = 15;
 
   load_tmp = dir('max_Lg_r_uc*.mat');
-  if ~(length(load_tmp) == 0)
-    assert(length(load_tmp) == 1);
+  if ~(abs(length(load_tmp)) < tol)
+    assert(abs(length(load_tmp) - 1) < tol);
     load(load_tmp.name);
     lb_bounds_15(lin_idx, 4) = best_cost / 1e6;
     solve_times_15(lin_idx, 4) = tot_time / 60;
   end
 
   load_tmp = dir('max_Lg_r_d_uc*.mat');
-  if ~(length(load_tmp) == 0)
-    assert(length(load_tmp) == 1);
+  if ~(abs(length(load_tmp)) < tol)
+    assert(abs(length(load_tmp) - 1) < tol);
     load(load_tmp.name);
     lb_bounds_15(lin_idx, 5) = best_cost / 1e6;
     solve_times_15(lin_idx, 5) = tot_time / 60;
   end
 
   load_tmp = dir('per_info_uc*.mat');
-  if ~(length(load_tmp) == 0)
-    assert(length(load_tmp) == 1);
+  if ~(abs(length(load_tmp)) < tol)
+    assert(abs(length(load_tmp) - 1) < tol);
     load(load_tmp.name);
     lb_bounds_15(lin_idx, 6) = mean(obj_lb) / 1e6;
     lb_bounds_15(lin_idx, 7) = 1.96 * std(obj_lb) / (1e6 * sqrt(length(obj_lb)));
@@ -53,8 +54,8 @@ for idx_i = 1:num
   cd(['gen15/ub_bounds/',ub_filename]);
 
   load_tmp = dir('ub_fv_*.mat');
-  if ~(length(load_tmp) == 0)
-    assert(length(load_tmp) == 1);
+  if ~(abs(length(load_tmp)) < tol)
+    assert(abs(length(load_tmp) - 1) < tol);
     load(load_tmp.name);
     ub_bounds = sum(ub_cost);
     lb_bounds_15(lin_idx, 8) = mean(ub_bounds) / 1e6;
@@ -76,8 +77,8 @@ for idx_i = 1:num
   cd(['gen30/lb_bounds/',filename]);
   m_v = str2num(filename(9));
   sig_v = str2num(filename(13:14));
-  m_idx = find(m == m_v);
-  sig_idx = find(sig == sig_v);
+  m_idx = find(abs(m - m_v) < tol);
+  sig_idx = find(abs(sig - sig_v) < tol);
   lin_idx = 3 * (m_idx - 1) + sig_idx;
   lb_bounds_30(lin_idx, 1) = m_v * 0.1;
   lb_bounds_30(lin_idx, 2) = sig_v * 0.01;
@@ -87,24 +88,24 @@ for idx_i = 1:num
   solve_times_30(lin_idx, 3) = 30;
 
   load_tmp = dir('max_Lg_r_uc*.mat');
-  if ~(length(load_tmp) == 0)
-    assert(length(load_tmp) == 1);
+  if ~(abs(length(load_tmp)) < tol)
+    assert(abs(length(load_tmp) - 1) < tol);
     load(load_tmp.name);
     lb_bounds_30(lin_idx, 4) = best_cost / 1e6;
     solve_times_30(lin_idx, 4) = tot_time / 60;
   end
 
   load_tmp = dir('max_Lg_r_d_uc*.mat');
-  if ~(length(load_tmp) == 0)
-    assert(length(load_tmp) == 1);
+  if ~(abs(length(load_tmp)) < tol)
+    assert(abs(length(load_tmp) - 1) < tol);
     load(load_tmp.name);
     lb_bounds_30(lin_idx, 5) = best_cost / 1e6;
     solve_times_30(lin_idx, 5) = tot_time / 60;
   end
 
   load_tmp = dir('per_info_uc*.mat');
-  if ~(length(load_tmp) == 0)
-    assert(length(load_tmp) == 1);
+  if ~(abs(length(load_tmp)) < tol)
+    assert(abs(length(load_tmp) - 1) < tol);
     load(load_tmp.name);
     lb_bounds_30(lin_idx, 6) = mean(obj_lb) / 1e6;
     lb_bounds_30(lin_idx, 7) = 1.96 * std(obj_lb) / (1e6 * sqrt(length(obj_lb)));
@@ -118,8 +119,8 @@ for idx_i = 1:num
   cd(['gen30/ub_bounds/',ub_filename]);
 
   load_tmp = dir('ub_fv_*.mat');
-  if ~(length(load_tmp) == 0)
-    assert(length(load_tmp) == 1);
+  if ~(abs(length(load_tmp)) < tol)
+    assert(abs(length(load_tmp) - 1) < tol);
     load(load_tmp.name);
     ub_bounds = sum(ub_cost);
     lb_bounds_30(lin_idx, 8) = mean(ub_bounds) / 1e6;
@@ -141,8 +142,8 @@ for idx_i = 1:num
   cd(['gen50/lb_bounds/',filename]);
   m_v = str2num(filename(9));
   sig_v = str2num(filename(13:14));
-  m_idx = find(m == m_v);
-  sig_idx = find(sig == sig_v);
+  m_idx = find(abs(m - m_v) < tol);
+  sig_idx = find(abs(sig - sig_v) < tol);
   lin_idx = 3 * (m_idx - 1) + sig_idx;
   lb_bounds_50(lin_idx, 1) = m_v * 0.1;
   lb_bounds_50(lin_idx, 2) = sig_v * 0.01;
@@ -152,24 +153,24 @@ for idx_i = 1:num
   solve_times_50(lin_idx, 3) = 50;
 
   load_tmp = dir('max_Lg_r_uc*.mat');
-  if ~(length(load_tmp) == 0)
-    assert(length(load_tmp) == 1);
+  if ~(abs(length(load_tmp)) < tol)
+    assert(abs(length(load_tmp) - 1) < tol);
     load(load_tmp.name);
     lb_bounds_50(lin_idx, 4) = best_cost / 1e6;
     solve_times_50(lin_idx, 4) = tot_time / 60;
   end
 
   load_tmp = dir('max_Lg_r_d_uc*.mat');
-  if ~(length(load_tmp) == 0)
-    assert(length(load_tmp) == 1);
+  if ~(abs(length(load_tmp)) < tol)
+    assert(abs(length(load_tmp) - 1) < tol);
     load(load_tmp.name);
     lb_bounds_50(lin_idx, 5) = best_cost / 1e6;
     solve_times_50(lin_idx, 5) = tot_time / 60;
   end
 
   load_tmp = dir('per_info_uc*.mat');
-  if ~(length(load_tmp) == 0)
-    assert(length(load_tmp) == 1);
+  if ~(abs(length(load_tmp)) < tol)
+    assert(abs(length(load_tmp) - 1) < tol);
     load(load_tmp.name);
     lb_bounds_50(lin_idx, 6) = mean(obj_lb) / 1e6;
     lb_bounds_50(lin_idx, 7) = 1.96 * std(obj_lb) / (1e6 * sqrt(length(obj_lb)));
@@ -183,8 +184,8 @@ for idx_i = 1:num
   cd(['gen50/ub_bounds/',ub_filename]);
 
   load_tmp = dir('ub_fv_*.mat');
-  if ~(length(load_tmp) == 0)
-    assert(length(load_tmp) == 1);
+  if ~(abs(length(load_tmp)) < tol)
+    assert(abs(length(load_tmp) - 1) < tol);
     load(load_tmp.name);
     ub_bounds = sum(ub_cost);
     lb_bounds_50(lin_idx, 8) = mean(ub_bounds) / 1e6;

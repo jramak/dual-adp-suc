@@ -38,11 +38,12 @@ slopes_sorted = slopes(I);
 q_max_sorted = q_max(I);
 cumsum_q_max_sorted = cumsum(q_max_sorted);
 
+tol = 0.0001;
 lambda_init = inf(size(x_s));
 for i = 1:T
     for j = 1:quadPts
         tmp = find(cumsum_q_max_sorted-x_s(i,j)>0);
-        if numel(tmp) == 0
+        if abs(numel(tmp)) < tol
             error('something wrong');
         end
         lambda_init(i,j) = slopes_sorted(tmp(1));

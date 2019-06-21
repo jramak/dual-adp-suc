@@ -1,5 +1,6 @@
 function run_per_info_mip(filename, num_scenarios)
 
+tol = 0.0001
 irgdx(filename);
 Lu = Lu;
 numGens = length(Lu) - 2; % number of generators not including buy/sell
@@ -22,7 +23,7 @@ for i = 1:num_scenarios
   % modelstatus = 8 means integer solution found
   % make sure less than 0.01% optimality gap for all runs
   irgdx(['lb_per_info_', num2str(i), '.gdx']);
-  assert(length(modelstatus) == 1);
+  assert(abs(length(modelstatus) - 1) < tol);
   assert(all((abs(modelstatus - 8) <= 0.01) | (abs(modelstatus - 1) <= 0.01)));
   assert(all(optcr <= 0.1));
   obj_lb(i) = objEst_lb;
