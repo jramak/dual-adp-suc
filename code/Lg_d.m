@@ -45,7 +45,7 @@ for t = T:-1:1
     end
 end
 
-tol = 0.0001
+tol = 0.0001;
 cost = V(Lu+Ld,1);
 state = Lu+Ld;
 for t = 1:T
