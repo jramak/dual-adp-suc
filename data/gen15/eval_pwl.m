@@ -6,7 +6,7 @@ function [x,y] = eval_pwl(q,c,qmin,qmax,nPts)
 x = linspace(qmin,qmax,nPts)';
 
 [~,k] = histc(x,q); % vectorized binning
-tol = 0.0001
+tol = 0.0001;
 k(abs(k - length(q)) < tol) = length(q) - 1;
 t = (x - q(k))./(q(k+1) - q(k));
 y = (1-t).*c(k) + t.*c(k+1);
