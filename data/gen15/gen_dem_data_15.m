@@ -1,4 +1,5 @@
 function gen_dem_data_15(maxDemand_mult,maxDemand,percent_sig)
+tol = 0.0001
 maxDemand = maxDemand * maxDemand_mult;
 
 numOffers = 10;
@@ -45,9 +46,9 @@ Lu = r_minUpTime((numOffers+1):(numOffers+maxGens));
 
 isaninteger = @(x)isfinite(x) & x==floor(x);
 
-flag_price = ((~all(price == 0, 2)) & (~all(qty == 0, 2)) & ...
-             (qmax > qmin) & (sum(price == 0, 2) > 1) & ...
-             (sum(qty == 0, 2) > 1) & (Ld > 0) & (Lu > 0) & ...
+flag_price = ((~all(abs(price) < tol, 2)) & (~all(abs(qty) < tol, 2)) & ...
+             (qmax > qmin) & (sum(abs(price) < tol, 2) > 1) & ...
+             (sum(abs(qty) < tol, 2) > 1) & (Ld > 0) & (Lu > 0) & ...
              (isaninteger(Ld)) & (isaninteger(Lu)) & (sum(qty, 2) > qmin));
 
 sum(flag_price)
@@ -115,7 +116,7 @@ r_struct = rgdx('uc_all',s8);
 r_qmin = r_struct.val;
 qmin = r_qmin((numOffers+[s_idx1; s_idx2; s_idx3])');
 
-price(qty == 0) = 0;
+price(abs(qty) < tol) = 0;
 
 T = 168;
 % d = 2000*ones(T,1);
@@ -206,7 +207,7 @@ for i = 1:numGens
     qmax(i) = min(q(i, numPts(i)), qmax(i));
     % get rid of repeated points
     for j = 1:numPts(i)
-        if (qmax(i) == q(i,j))
+        if (abs(qmax(i) - q(i,j)) < tol)
             numPts(i) = j;
             break;
         end
@@ -334,7 +335,7 @@ numGens = length(Lu) - 2; % number of generators not including buy/sell
 z_init = zeros(numGens+2, 1);
 u_init = [u_s(1:numGens, init_T); 0; 0];
 for i = 1:numGens
-    if u_init(i) == 1
+    if abs(u_init(i) - 1) < tol
         [~, tmp_idx] = min(abs(Pow(:, i) - z_s(i, init_T)));
         z_init(i) = Pow(tmp_idx, i);
     end
@@ -347,11 +348,11 @@ for i = 1:numGens
     for t = 1:init_T
         if (gen_state(i) < Lu(i))
             gen_state(i) = gen_state(i) + 1;
-        elseif ((gen_state(i) == Lu(i)) && (u_s(i, t) == 0))
+        elseif ((abs(gen_state(i) - Lu(i)) < tol) && (abs(u_s(i, t)) < tol))
             gen_state(i) = gen_state(i) + 1;
         elseif ((Lu(i) < gen_state(i)) && (gen_state(i) < (Lu(i) + Ld(i))))
             gen_state(i) = gen_state(i) + 1;
-        elseif ((gen_state(i) == (Lu(i) + Ld(i))) && (u_s(i, t) == 1))
+        elseif ((abs(gen_state(i) - (Lu(i) + Ld(i))) < tol) && (abs(u_s(i, t) - 1) < tol))
             gen_state(i) = 1;
         end
     end

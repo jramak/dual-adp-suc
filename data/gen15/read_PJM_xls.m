@@ -1,4 +1,5 @@
 function scaledDemand = read_PJM_xls(maxDemand)
+tol = 0.0001
 
 [NUMR,TXT,RAW] = xlsread('2013-day-ahead-demand-bid.xls','PJM');
 
@@ -19,26 +20,26 @@ T = 168;
 demandAvg = inf(T,1);
 demandStd = inf(T,1);
 tmp_idx = 1;
-demandAvg(tmp_idx:tmp_idx+23) = mean(NUM(day_label==1,:),1)';
-demandStd(tmp_idx:tmp_idx+23) = std(NUM(day_label==1,:),1)';
+demandAvg(tmp_idx:tmp_idx+23) = mean(NUM(abs(day_label-1)<tol,:),1)';
+demandStd(tmp_idx:tmp_idx+23) = std(NUM(abs(day_label-1)<tol,:),1)';
 tmp_idx = tmp_idx + 24;
-demandAvg(tmp_idx:tmp_idx+23) = mean(NUM(day_label==2,:),1)';
-demandStd(tmp_idx:tmp_idx+23) = std(NUM(day_label==2,:),1)';
+demandAvg(tmp_idx:tmp_idx+23) = mean(NUM(abs(day_label-2)<tol,:),1)';
+demandStd(tmp_idx:tmp_idx+23) = std(NUM(abs(day_label-2)<tol,:),1)';
 tmp_idx = tmp_idx + 24;
-demandAvg(tmp_idx:tmp_idx+23) = mean(NUM(day_label==3,:),1)';
-demandStd(tmp_idx:tmp_idx+23) = std(NUM(day_label==3,:),1)';
+demandAvg(tmp_idx:tmp_idx+23) = mean(NUM(abs(day_label-3)<tol,:),1)';
+demandStd(tmp_idx:tmp_idx+23) = std(NUM(abs(day_label-3)<tol,:),1)';
 tmp_idx = tmp_idx + 24;
-demandAvg(tmp_idx:tmp_idx+23) = mean(NUM(day_label==4,:),1)';
-demandStd(tmp_idx:tmp_idx+23) = std(NUM(day_label==4,:),1)';
+demandAvg(tmp_idx:tmp_idx+23) = mean(NUM(abs(day_label-4)<tol,:),1)';
+demandStd(tmp_idx:tmp_idx+23) = std(NUM(abs(day_label-4)<tol,:),1)';
 tmp_idx = tmp_idx + 24;
-demandAvg(tmp_idx:tmp_idx+23) = mean(NUM(day_label==5,:),1)';
-demandStd(tmp_idx:tmp_idx+23) = std(NUM(day_label==5,:),1)';
+demandAvg(tmp_idx:tmp_idx+23) = mean(NUM(abs(day_label-5)<tol,:),1)';
+demandStd(tmp_idx:tmp_idx+23) = std(NUM(abs(day_label-5)<tol,:),1)';
 tmp_idx = tmp_idx + 24;
-demandAvg(tmp_idx:tmp_idx+23) = mean(NUM(day_label==6,:),1)';
-demandStd(tmp_idx:tmp_idx+23) = std(NUM(day_label==6,:),1)';
+demandAvg(tmp_idx:tmp_idx+23) = mean(NUM(abs(day_label-6)<tol,:),1)';
+demandStd(tmp_idx:tmp_idx+23) = std(NUM(abs(day_label-6)<tol,:),1)';
 tmp_idx = tmp_idx + 24;
-demandAvg(tmp_idx:tmp_idx+23) = mean(NUM(day_label==7,:),1)';
-demandStd(tmp_idx:tmp_idx+23) = std(NUM(day_label==7,:),1)';
+demandAvg(tmp_idx:tmp_idx+23) = mean(NUM(abs(day_label-7)<tol,:),1)';
+demandStd(tmp_idx:tmp_idx+23) = std(NUM(abs(day_label-7)<tol,:),1)';
 
 assert(~any(isnan(demandAvg)));
 assert(~any(isinf(demandAvg)));
