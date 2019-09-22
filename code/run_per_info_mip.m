@@ -1,6 +1,6 @@
 function run_per_info_mip(filename, num_scenarios, T)
 
-tol = 0.0001;
+tol = 0.01;
 irgdx(filename);
 Lu = Lu;
 numGens = length(Lu) - 2; % number of generators not including buy/sell

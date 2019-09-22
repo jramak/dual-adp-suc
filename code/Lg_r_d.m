@@ -1,7 +1,7 @@
 function [cost,z_sol,z_sol_std,V1,uGen1,V2,uGen2] = Lg_r_d(q,c,qmin,...
     qmax,c_bar,h_bar,Lu,Ld,ps,lambda,T,Rd_i,Ru_i,nPts,paths,P,F,...
     numDemands,Pstep,gen_state_init,z_init)
-tol = 0.0001; % tol for equality
+tol = 0.01; % tol for equality
 % all inputs are in column form (if they are vectors)
 
 % number of states = Lu + Ld

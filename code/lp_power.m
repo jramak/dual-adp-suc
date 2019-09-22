@@ -5,10 +5,10 @@ U_idx = length(c);
 % assert(L_idx < U_idx);
 numIters = floor(log2(U_idx)+1);
 
-tol = 0.0001;
+tol = 0.01;
 for i = 1:numIters
     M_idx = floor((L_idx+U_idx)/2);
-    
+
     if abs(L_idx - (U_idx-1)) < tol
 %         assert(c(L_idx) < c(U_idx));
         slope = (c(U_idx) - c(L_idx))/(q(U_idx) - q(L_idx));
@@ -32,7 +32,7 @@ for i = 1:numIters
         if (Lslope <= 0 && Rslope >= 0)
             z = q(M_idx);
             cost = c(M_idx)-lambda*z;
-            return 
+            return
         elseif (Lslope >= 0 && Rslope >= 0)
             U_idx = M_idx-1;
         elseif (Lslope <= 0 && Rslope <= 0)

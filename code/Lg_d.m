@@ -24,7 +24,7 @@ for t = T:-1:1
         [z_sol(t,j),LP_cost_vec(j)] = lp_power(lambda(t,j),q,c);
     end
     LP_cost(t) = ps'*LP_cost_vec;
-    
+
     uGen(1:(Lu-1),t) = 1; % generator must be on
     V(1:(Lu-1),t) = LP_cost(t) + c_bar + V(2:Lu,t+1);
     if (V(Lu+1,t+1) <= (LP_cost(t) + c_bar + V(Lu,t+1)))
@@ -45,7 +45,7 @@ for t = T:-1:1
     end
 end
 
-tol = 0.0001;
+tol = 0.01;
 cost = V(Lu+Ld,1);
 state = Lu+Ld;
 for t = 1:T

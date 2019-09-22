@@ -1,4 +1,4 @@
-tol = 0.0001;
+tol = 0.01;
 % 15 gen problem
 mat_res = dir('./gen15/lb_bounds/lb_*');
 num = length(mat_res);

@@ -38,7 +38,7 @@ slopes_sorted = slopes(I);
 q_max_sorted = q_max(I);
 cumsum_q_max_sorted = cumsum(q_max_sorted);
 
-tol = 0.0001;
+tol = 0.01;
 lambda_init = inf(size(x_s));
 for i = 1:T
     for j = 1:quadPts
