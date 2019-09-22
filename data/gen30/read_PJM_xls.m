@@ -1,5 +1,5 @@
 function scaledDemand = read_PJM_xls(maxDemand)
-tol = 0.0001;
+tol = 0.01;
 
 [NUMR,TXT,RAW] = xlsread('2013-day-ahead-demand-bid.xls','PJM');
 

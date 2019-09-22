@@ -1,5 +1,5 @@
 function gen_dem_data_50(maxDemand_mult,maxDemand,percent_sig)
-tol = 0.0001;
+tol = 0.01;
 maxDemand = maxDemand * maxDemand_mult;
 
 numOffers = 10;
