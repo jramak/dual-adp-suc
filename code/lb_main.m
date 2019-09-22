@@ -1,15 +1,15 @@
-function lb_main(filename,maxIters,rho0,stepVec)
+function lb_main(filename,maxIters,rho0,stepVec,T)
 
 poolobj = parpool('local',4);
 
 %[gen_state, z_prev, u_prev, stay_on, stay_off] = init_state_calc(filename);
 
-[~,~,~,~,~,~,~] = max_Lg_r(filename,maxIters,rho0,stepVec);
+[~,~,~,~,~,~,~] = max_Lg_r(filename,maxIters,rho0,stepVec,T);
 
-[~,~,~,~,~,~,~,~] = max_Lg_r_d(filename,maxIters,rho0,stepVec);
+[~,~,~,~,~,~,~,~] = max_Lg_r_d(filename,maxIters,rho0,stepVec,T);
 
 num_scenarios = 100;
-run_per_info_mip(filename, num_scenarios);
+run_per_info_mip(filename, num_scenarios, T);
 
 delete(poolobj);
 

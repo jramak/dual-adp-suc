@@ -1,5 +1,5 @@
 function [best_cost,best_idx,opt_cost_vec,time,tot_time,L_g_cost,...
-    z_sol_avg,z_sol_std] = max_Lg_r_d(filename,maxIters,rho0,stepVec)
+    z_sol_avg,z_sol_std] = max_Lg_r_d(filename,maxIters,rho0,stepVec,T)
 
 % load in from data file
 irgdx(filename);
@@ -23,7 +23,7 @@ gen_state = gen_state;
 z_init = z_init;
 
 numGens = length(Lu) - 2; % number of generators not including buy/sell
-T = 168;
+% T = 168;
 quadPts = length(p_s); % number of quadrature points in distribution
 % power level step size for each generator
 Pstep = (Pow(2,1:numGens) - Pow(1,1:numGens))';

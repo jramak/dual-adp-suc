@@ -1,7 +1,7 @@
 $GDXin %probdata%
 Sets
          i       generators              / 1 * %subprob% /
-         t       time periods            / 1 * 168 /
+         t       time periods            / 1 * %T% /
          k       max num piecewise pts for buy sell gen  / 1 * 22 /
 *         kk      max piecewise pts for fut reg gen       / 1 * 100 /
          s       sample paths            / 1 * 100 /

@@ -1,4 +1,4 @@
-function run_per_info_mip(filename, num_scenarios)
+function run_per_info_mip(filename, num_scenarios, T)
 
 tol = 0.0001;
 irgdx(filename);
@@ -12,6 +12,7 @@ parfor i = 1:num_scenarios
   [status,result]=system(['gams per_info_mip_single --probdata=',...
                           filename,' --subprob=',num2str(numGens+2),...
                           ' --scenario=', num2str(i),...
+                          ' --T=', num2str(T),...
                           ' mip=cplex o=/dev/null lo=0']);
   %result
   scenario_times(i) = toc(tind);
